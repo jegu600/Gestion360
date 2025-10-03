@@ -1,7 +1,7 @@
 import { Login } from "./auth/Login"
 
 
-function App() {
+function GestionApp() {
 
   return (
     <>
@@ -10,4 +10,4 @@ function App() {
   )
 }
 
-export default App
+export default GestionApp
