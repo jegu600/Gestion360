@@ -3,37 +3,41 @@ import './login.css';
 
 export const Login = () => {
     return (
-
-        <div className="container">
-            <div className="row">
-                <div className="col-lg-6 col-md-8 login-box">
-                    <div className="col-lg-12 login-form">
-                        <div className="col-lg-12 login-form">
-                            <form>
-                                <div className="form-group">
-                                    <label className="form-control-label">USERNAME</label>
-                                    <input type="text" className="form-control" />
-                                </div>
-                                <div className="form-group">
-                                    <label className="form-control-label">PASSWORD</label>
-                                    <input type="password" className="form-control" />
-                                </div>
-
-                                <div className="col-lg-12 loginbttm">
-                                    <div className="col-lg-6 login-btm login-text">
-                                        {/* <!-- Error Message --> */}
-                                    </div>
-                                    <div className="col-lg-6 login-btm login-button">
-                                        <button type="submit" className="btn btn-outline-primary">LOGIN</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+        <div className="fondo-imagen d-flex align-items-center justify-content-center vh-100">
+            <div className="login-container p-5 shadow-lg rounded-4 bg-light">
+                <h2 className="text-center mb-5 fw-bold text-dark">Login</h2>
+                <form>
+                    <div className="form-group fs-4">
+                        <label className="form-label fw-semibold">Usuario</label>
+                        <input
+                            type="text"
+                            className="form-control form-control-lg"
+                            placeholder="Ingresa tu usuario"
+                        />
                     </div>
-                </div>
+
+                    <div className="form-group mb-4 fs-4">
+                        <label className="form-label fw-semibold">Contraseña</label>
+                        <input
+                            type="password"
+                            className="form-control form-control-lg"
+                            placeholder="••••••••"
+                        />
+                    </div>
+
+                    <div className="d-grid">
+                        <button type="submit" className="btn btn-primary btn-lg">
+                            Iniciar sesión
+                        </button>
+                    </div>
+
+                    <div className="d-grid mt-5">
+                        <h5>
+                            <a href="#">Recuperar Contraseña</a>
+                        </h5>
+                    </div>
+                </form>
             </div>
         </div>
-
-
-    )
+    );
 }
