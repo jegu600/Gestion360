@@ -1,24 +1,25 @@
 // se requiere para traer la ayuda de codigo- NO ES INDISPENSABLE
 const { response } = require('express');
+const usuarioModel = require('../models/usuarioModel');
+
+
 
 // la funcion de divide en: ( lo que solicita el usuario, lo que respondemos ) =>{ estrutura };
 
 
 // funcion para ir a regisgrar usuario login
-const crearUsuario = (req, res = response) => {
+const crearUsuario = async (req, res = response) => {
 
-    // manejo de errores
+    const usuario = usuarioModel(req.body);
+    await usuario.save();
 
     // recuperacion de varibles por desestruturacion
-    const { email, nombre, password } = req.body;
+    // const { email, nombre, password, rol } = req.body;
 
     // Respuesta valida
     res.status(201).json({
         ok: true,
         msg: 'registrar',
-        nombre,
-        email,
-        password,
     });
 }
 

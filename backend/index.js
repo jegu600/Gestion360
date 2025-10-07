@@ -1,13 +1,20 @@
 
 // se instacia express
 const express = require('express');
-
 // dotenv se utiliza para reconcer y utulizar las variables de entorno
 const dovEnv = require('dotenv');
+// importar conexion a la base de datos
+const { dbConnetion } = require('./database/config');
 dovEnv.config();
+
+
+// conexion a la base de datos
+dbConnetion();
+
 
 // Crear el servidor de express
 const app = express();
+
 
 //llamar el directorio(carpeta)=>PUBLIC 
 app.use(express.static('public'));

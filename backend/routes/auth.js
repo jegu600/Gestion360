@@ -21,8 +21,9 @@ router.post(
     '/register',
     [ // se crean los middlewares
         check('nombre', 'El nombre es obligatorio').not().isEmpty(),
-        check('email', 'El email es obligatorio').isEmail(),
+        check('correo', 'El correo es obligatorio').isEmail(),
         check('password', 'El password debe tener minimo 8 caracteres').isLength({ min: 8 }),
+        check('rol', 'El rol es obligatorio').not().isEmpty(),
         validarCampos,
     ],
     crearUsuario,
