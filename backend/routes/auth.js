@@ -1,4 +1,4 @@
-// se instacia express
+// IMPORTACIONES
 // traer expres
 const { Router } = require('express');
 // traer la funcion Router de express
@@ -6,6 +6,7 @@ const router = Router();
 // se encarga de validar los campos
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validarCampos');
+const { validarJsonWT } = require('../middlewares/validarJWT');
 
 
 // desestrurar funciones de acciones
@@ -33,7 +34,7 @@ router.post(
 router.post(
     '/',
     [ // se crean los middlewares
-        check('email', 'El email es obligatorio').isEmail(),
+        check('correo', 'El email es obligatorio').isEmail(),
         check('password', 'El password debe tener minimo 8 caracteres').isLength({ min: 8 }),
         validarCampos,
     ],
@@ -41,7 +42,7 @@ router.post(
 );
 
 // enpoint para renovar Token
-router.get('/renew', renovarToken);
+router.get('/renew', validarJsonWT, renovarToken);
 
 
 // exportar 
