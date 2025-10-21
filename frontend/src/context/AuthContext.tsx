@@ -3,8 +3,6 @@
  * 
  * Maneja el estado global de autenticación.
  * Provee funciones para login, register, logout y verificación de sesión.
- * 
- * NUEVO: Archivo creado desde cero
  */
 
 import type { ReactNode } from 'react';

@@ -4,7 +4,6 @@
  * Configura la instancia base de Axios para todas las peticiones HTTP.
  * Incluye interceptores para agregar token y manejar errores.
  * 
- * NUEVO: Archivo creado desde cero
  */
 
 import axios, { AxiosError } from 'axios';

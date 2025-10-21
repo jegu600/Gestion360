@@ -5,7 +5,6 @@
  * Cada función está protegida por el middleware de JWT, por lo que solo
  * usuarios autenticados pueden acceder.
  * 
- * CAMBIO: Archivo creado desde cero para manejar la lógica de tareas
  */
 
 const { response } = require('express');

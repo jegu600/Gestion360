@@ -6,8 +6,6 @@
  * - Notificaciones con badge
  * - Menú de usuario con dropdown
  * - Botón de logout
- * 
- * NUEVO: Componente creado desde cero
  */
 
 import { useState, useEffect, useRef } from 'react';

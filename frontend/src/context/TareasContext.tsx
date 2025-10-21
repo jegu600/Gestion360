@@ -3,8 +3,6 @@
  * 
  * Maneja el estado global de tareas.
  * Provee funciones CRUD y filtrado de tareas.
- * 
- * NUEVO: Archivo creado desde cero
  */
 
 import { createContext, useContext, useState } from 'react';

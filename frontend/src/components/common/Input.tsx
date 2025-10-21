@@ -3,8 +3,6 @@
  * 
  * Input reutilizable con label, validación y estados de error.
  * Soporte para diferentes tipos de input.
- * 
- * NUEVO: Componente creado desde cero
  */
 
 import { forwardRef } from 'react';

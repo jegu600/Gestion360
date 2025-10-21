@@ -3,8 +3,6 @@
  * 
  * Spinner de carga con diferentes tamaños y mensajes.
  * Puede usarse como fullscreen o inline.
- * 
- * NUEVO: Componente creado desde cero
  */
 
 import './Loader.css';

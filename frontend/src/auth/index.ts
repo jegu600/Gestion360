@@ -3,7 +3,7 @@
  * 
  * Exportaciones del módulo de autenticación.
  * 
- * CAMBIO: Agregado export de RegistroPage y AuthRoutes
+ * Agregado export de RegistroPage y AuthRoutes
  */
 
 export * from './pages/LoginPages';

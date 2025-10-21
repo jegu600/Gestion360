@@ -4,7 +4,6 @@
  * Define todos los endpoints para la gestión de notificaciones.
  * Todas las rutas están protegidas con JWT.
  * 
- * CAMBIO: Archivo creado desde cero para el sistema de notificaciones
  */
 
 const { Router } = require('express');

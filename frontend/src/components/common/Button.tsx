@@ -3,8 +3,6 @@
  * 
  * Botón reutilizable con diferentes variantes y estados.
  * Soporte para loading, iconos y tamaños.
- * 
- * NUEVO: Componente creado desde cero
  */
 
 import type { ButtonHTMLAttributes } from 'react';

@@ -3,7 +3,6 @@
  * 
  * Exporta todos los componentes comunes reutilizables.
  * 
- * NUEVO: Archivo creado desde cero
  */
 
 export * from './Navbar';

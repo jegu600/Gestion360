@@ -3,8 +3,7 @@
  * 
  * Router principal de la aplicación.
  * Maneja rutas públicas y privadas según el estado de autenticación.
- * 
- * CAMBIO: Reemplazado authStatus hardcodeado por useAuth real
+ * Reemplazado authStatus hardcodeado por useAuth real
  */
 
 import { Routes, Route, Navigate } from 'react-router-dom';

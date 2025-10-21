@@ -3,8 +3,6 @@
  * 
  * Define todas las interfaces compartidas en el proyecto.
  * Asegura type safety en toda la aplicación.
- * 
- * NUEVO: Archivo creado desde cero
  */
 
 // ========================================

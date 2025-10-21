@@ -3,8 +3,6 @@
  * 
  * Card reutilizable con header, body y footer opcionales.
  * Soporte para diferentes estilos y hover effects.
- * 
- * NUEVO: Componente creado desde cero
  */
 
 import type{ ReactNode } from 'react';

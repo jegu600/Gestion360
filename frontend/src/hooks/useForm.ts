@@ -3,8 +3,6 @@
  * 
  * Hook personalizado para manejar formularios.
  * Maneja valores, validaciones, errores y estado de campos tocados.
- * 
- * NUEVO: Archivo creado desde cero
  */
 
 import { useState } from 'react';

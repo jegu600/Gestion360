@@ -5,7 +5,6 @@
  * Todas las rutas están protegidas con JWT.
  * Incluye validaciones con express-validator.
  * 
- * CAMBIO: Archivo creado desde cero - reemplaza events.js
  */
 
 const { Router } = require('express');

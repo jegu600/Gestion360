@@ -3,8 +3,6 @@
  * 
  * Maneja el estado global de notificaciones.
  * Incluye polling automático para actualizar el contador.
- * 
- * NUEVO: Archivo creado desde cero
  */
 
 import { createContext, useContext, useState, useEffect } from 'react';

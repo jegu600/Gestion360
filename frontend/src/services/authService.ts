@@ -3,8 +3,6 @@
  * 
  * Maneja todas las peticiones HTTP relacionadas con autenticación.
  * Endpoints: login, register, renewToken
- * 
- * NUEVO: Archivo creado desde cero
  */
 
 import api from './api';

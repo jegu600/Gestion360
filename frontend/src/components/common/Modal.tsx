@@ -3,8 +3,6 @@
  * 
  * Modal reutilizable con soporte para diferentes tamaños.
  * Incluye header, body y footer personalizables.
- * 
- * NUEVO: Componente creado desde cero
  */
 
 import { useEffect } from 'react';

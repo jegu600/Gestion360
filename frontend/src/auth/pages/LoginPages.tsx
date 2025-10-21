@@ -3,7 +3,7 @@
  * 
  * Página de inicio de sesión con validación y manejo de errores.
  * 
- * CAMBIO: Agregada lógica completa de login con useAuth y useForm
+ * Agregada lógica completa de login con useAuth y useForm
  */
 
 import { useEffect } from 'react';

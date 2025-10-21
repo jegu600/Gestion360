@@ -4,7 +4,6 @@
  * Maneja todas las peticiones HTTP relacionadas con tareas.
  * CRUD completo + cambio de estado.
  * 
- * NUEVO: Archivo creado desde cero
  */
 
 import api from './api';

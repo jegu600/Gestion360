@@ -3,8 +3,6 @@
  * 
  * Maneja todas las peticiones HTTP relacionadas con notificaciones.
  * Obtener, marcar como leídas, eliminar.
- * 
- * NUEVO: Archivo creado desde cero
  */
 
 import api from './api';
