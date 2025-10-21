@@ -70,13 +70,24 @@ export const LoginPages = () => {
   });
 
   return (
-    <div className="fondo-imagen d-flex align-items-center justify-content-center vh-100">
-      <div className="login-container p-5 shadow-lg rounded-4 bg-light">
-        <h2 className="text-center mb-4 fw-bold text-dark">Iniciar Sesión</h2>
+    <div className="login-page">
+      <div className="login-card">
+        <div className="logo-container">
+          <img 
+            src="/src/assets/logo.png" 
+            alt="Gestión 360 Logo" 
+            className="login-logo"
+          />
+        </div>
+        <div className="login-header">
+
+          <h1 className="login-title">Iniciar Sesión</h1>
+          <p className="login-subtitle">Ingresa tus credenciales para acceder</p>
+        </div>
 
         {/* MENSAJE DE ERROR GLOBAL */}
         {authState.errorMessage && (
-          <div className="alert alert-danger alert-dismissible fade show" role="alert">
+          <div className="alert alert-danger alert-dismissible fade show mb-4" role="alert">
             <i className="fas fa-exclamation-circle me-2"></i>
             {authState.errorMessage}
             <button
@@ -88,39 +99,39 @@ export const LoginPages = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="login-form">
           {/* CAMPO EMAIL */}
-          <div className="mb-3">
-            <label htmlFor="correo" className="form-label fw-semibold">
-              Correo Electrónico
+          <div className="form-group">
+            <label htmlFor="correo" className="form-label">
+              Email
             </label>
             <input
               type="email"
-              className={`form-control form-control-lg ${
-                touched.correo && errors.correo ? 'is-invalid' : ''
+              className={`form-input ${
+                touched.correo && errors.correo ? 'input-error' : ''
               }`}
               id="correo"
               name="correo"
-              placeholder="ejemplo@correo.com"
+              placeholder="ejemplo@empresa.com"
               value={values.correo}
               onChange={handleChange}
               onBlur={handleBlur}
               disabled={isSubmitting}
             />
             {touched.correo && errors.correo && (
-              <div className="invalid-feedback">{errors.correo}</div>
+              <span className="error-message">{errors.correo}</span>
             )}
           </div>
 
           {/* CAMPO PASSWORD */}
-          <div className="mb-4">
-            <label htmlFor="password" className="form-label fw-semibold">
+          <div className="form-group">
+            <label htmlFor="password" className="form-label">
               Contraseña
             </label>
             <input
               type="password"
-              className={`form-control form-control-lg ${
-                touched.password && errors.password ? 'is-invalid' : ''
+              className={`form-input ${
+                touched.password && errors.password ? 'input-error' : ''
               }`}
               id="password"
               name="password"
@@ -131,45 +142,32 @@ export const LoginPages = () => {
               disabled={isSubmitting}
             />
             {touched.password && errors.password && (
-              <div className="invalid-feedback">{errors.password}</div>
+              <span className="error-message">{errors.password}</span>
             )}
           </div>
 
           {/* BOTÓN SUBMIT */}
-          <div className="d-grid">
-            <button
-              type="submit"
-              className="btn btn-primary btn-lg"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  Iniciando sesión...
-                </>
-              ) : (
-                <>
-                  <i className="fas fa-sign-in-alt me-2"></i>
-                  Iniciar Sesión
-                </>
-              )}
-            </button>
-          </div>
-
-          {/* LINK A RECUPERAR CONTRASEÑA */}
-          <div className="text-center mt-4">
-            <a href="#" className="text-decoration-none">
-              <i className="fas fa-key me-1"></i>
-              ¿Olvidaste tu contraseña?
-            </a>
-          </div>
+          <button
+            type="submit"
+            className="btn-submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Iniciando sesión...
+              </>
+            ) : (
+              'Iniciar Sesión'
+            )}
+          </button>
 
           {/* LINK A REGISTRO */}
-          <div className="text-center mt-3">
-            <p className="mb-0">
+          <div className="login-footer">
+            <p className="register-text">
               ¿No tienes cuenta?{' '}
-              <Link to="/auth/registro" className="fw-bold text-decoration-none">
-                 Regístrate aquí
+              <Link to="/auth/registro" className="register-link">
+                Regístrate
               </Link>
             </p>
           </div>

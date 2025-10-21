@@ -1,14 +1,13 @@
 /**
  * ESTILOS DE REGISTRO PAGE
  * 
- * Estilos para la página de registro con diseño moderno.
- * 
- * NUEVO: Archivo creado desde cero
+ * Estilos para la página de registro 
+
  */
 
 /* Fondo de la página de registro */
 .fondo-imagen-registro {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #FDD835 0%, #FFB300 50%, #FF6F00 100%);
   min-height: 100vh;
   padding: 2rem 0;
 }
@@ -47,8 +46,8 @@
 
 .registro-container .form-control:focus,
 .registro-container .form-select:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  border-color: #cf7239;
+  box-shadow: 0 0 0 0.2rem rgba(234, 192, 102, 0.25);
 }
 
 /* Estilos de las etiquetas */
@@ -60,20 +59,20 @@
 
 /* Estilo del botón principal */
 .registro-container .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #FFB300 0%, #FF8F00 100%);
   border: none;
   border-radius: 8px;
   padding: 12px;
   font-size: 1.05rem;
   font-weight: 600;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 6px rgba(221, 103, 39, 0.3);
 }
 
 .registro-container .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 6px 12px rgba(205, 115, 25, 0.4);
+  background: linear-gradient(135deg, #df8320 0%, #eaa166 100%);
 }
 
 .registro-container .btn-primary:disabled {
@@ -83,7 +82,7 @@
 
 /* Estilos de los iconos */
 .registro-container .fa-user-plus {
-  color: #667eea;
+  color: #ffffff;
 }
 
 /* Estilos de los enlaces */
@@ -93,7 +92,7 @@
 }
 
 .registro-container a:hover {
-  color: #764ba2;
+  color: #ca6213;
   text-decoration: underline !important;
 }
 
