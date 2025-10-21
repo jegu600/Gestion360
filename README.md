@@ -12,6 +12,8 @@ React 18 + React Router 6
 4. Correr el proyecto
   npm run dev
 
+Mockup : https://www.canva.com/design/DAG0-q6t2F4/U-D9SDA2KxSmGfZeAIkceg/view?utm_content=DAG0-q6t2F4&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h9f296e52ee 
+
 ## 🛠️ Tecnologías a Utilizar
 
 ### Lenguaje de programación
