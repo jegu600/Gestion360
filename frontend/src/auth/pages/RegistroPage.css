@@ -1,0 +1,147 @@
+/**
+ * ESTILOS DE REGISTRO PAGE
+ * 
+ * Estilos para la página de registro con diseño moderno.
+ * 
+ * NUEVO: Archivo creado desde cero
+ */
+
+/* Fondo de la página de registro */
+.fondo-imagen-registro {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+
+/* Contenedor del formulario de registro */
+.registro-container {
+  max-width: 500px;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  animation: slideDown 0.5s ease-out;
+}
+
+/* Animación de entrada */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilos de los campos del formulario */
+.registro-container .form-control,
+.registro-container .form-select {
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  padding: 12px 15px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.registro-container .form-control:focus,
+.registro-container .form-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Estilos de las etiquetas */
+.registro-container .form-label {
+  color: #495057;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+/* Estilo del botón principal */
+.registro-container .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+}
+
+.registro-container .btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.registro-container .btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Estilos de los iconos */
+.registro-container .fa-user-plus {
+  color: #667eea;
+}
+
+/* Estilos de los enlaces */
+.registro-container a {
+  color: #667eea;
+  transition: color 0.3s ease;
+}
+
+.registro-container a:hover {
+  color: #764ba2;
+  text-decoration: underline !important;
+}
+
+/* Estilos de alertas */
+.registro-container .alert {
+  border-radius: 8px;
+  border: none;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Estilos para campos con error */
+.registro-container .is-invalid {
+  border-color: #dc3545;
+}
+
+.registro-container .invalid-feedback {
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+/* Estilos para texto de ayuda */
+.registro-container small.text-muted {
+  font-size: 0.8rem;
+  display: block;
+  margin-top: 0.25rem;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .registro-container {
+    margin: 1rem;
+    padding: 2rem 1.5rem !important;
+  }
+
+  .registro-container h2 {
+    font-size: 1.5rem;
+  }
+
+  .registro-container .fa-user-plus {
+    font-size: 2rem !important;
+  }
+}

@@ -4,7 +4,7 @@ export const ProjectsPages = () => {
     return (
         <>
             <div>
-                <h1>biennvenido</h1>
+                <h1>bienvenido</h1>
             </div>
             <div className="image">
 

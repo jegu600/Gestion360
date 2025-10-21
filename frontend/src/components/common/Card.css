@@ -1,0 +1,65 @@
+/**
+ * ESTILOS DE CARD COMPONENT
+ * 
+ * Estilos para cards con diferentes variantes.
+ * 
+ * NUEVO: Archivo creado desde cero
+ */
+
+/* Card base */
+.custom-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.card-bordered {
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Card con hover effect */
+.card-hoverable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Card clickable */
+.card-clickable {
+  cursor: pointer;
+}
+
+/* Header del card */
+.card-header {
+  padding: 1.25rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Body del card */
+.card-body {
+  padding: 1.25rem;
+}
+
+/* Footer del card */
+.card-footer {
+  padding: 1rem 1.25rem;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  font-size: 0.875rem;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .card-header,
+  .card-body {
+    padding: 1rem;
+  }
+
+  .card-footer {
+    padding: 0.75rem 1rem;
+  }
+}

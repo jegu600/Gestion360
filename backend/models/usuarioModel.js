@@ -3,28 +3,40 @@ const { Schema, model } = require('mongoose');
 const usuarioSchema = Schema({
     nombre: {
         type: String,
-        require: true,
+        required: true,
+        trim: true,
     },
 
     correo: {
         type: String,
-        require: true,
+        required: true,
         unique: true,
+        lowercase: true, // convierte a minusculas
+        trim: true,//elimina espacios
+        // validación basica de formato email
+        match: [/^\S+@\S+\.\S+$/, 'Por favor ingrese un email válido'],
     },
 
     password: {
         type: String,
-        require: true,
+        required: true,
+        minlength: 8, // mínimo 8 caracteres
 
     },
 
     rol: {
         type: String,
-        require: true,
-    }
+        required: true,
+        enum: ['admin', 'usuario'], // solo permite estos valores
+        default: 'usuario'    
+    }, 
+
 
 }, {
-    collection: "usuarios"
+    collection: "usuarios",
+    timestamps: true // agrega createdAt y updatedAt automáticamente
 });
+
+
 
 module.exports = model('usuarioModel', usuarioSchema);

@@ -1,13 +1,13 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "backend para sistema de gestion de tareas - Gestion360",
   "main": "index.ts",
   "scripts": {
     "dev": "nodemon --watch . --ext ts,js,json --exec \"npx ts-node\" index.js",
-    "start": "node dist/index.js"
+    "start": "node index.js"
   },
-  "author": "",
+  "author": "Jhon, Andres y cristian",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -16,6 +16,7 @@
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
     "json": "^11.0.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.1",
     "token": "^0.1.0",
     "web": "^0.0.2"

@@ -1,0 +1,109 @@
+# ARCHIVO .GITIGNORE - BACKEND
+# Especifica archivos y carpetas que NO deben subirse a Git
+
+# ========================================
+# ARCHIVOS DE ENTORNO (MUY IMPORTANTE)
+# ========================================
+# NUNCA subir archivos con credenciales
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# ========================================
+# NODE MODULES
+# ========================================
+# Carpeta con todas las dependencias instaladas
+# Se regenera con npm install
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ========================================
+# ARCHIVOS DE SISTEMA OPERATIVO
+# ========================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ========================================
+# EDITORES E IDEs
+# ========================================
+# Visual Studio Code
+.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ========================================
+# LOGS
+# ========================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# ========================================
+# COVERAGE Y TESTS
+# ========================================
+coverage/
+.nyc_output/
+*.lcov
+
+# ========================================
+# BUILDS Y DISTRIBUCIONES
+# ========================================
+dist/
+build/
+*.tgz
+
+# ========================================
+# ARCHIVOS TEMPORALES
+# ========================================
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+
+# ========================================
+# PM2 (Process Manager)
+# ========================================
+.pm2/
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# ========================================
+# OTROS
+# ========================================
+# Archivos de respaldo de base de datos
+*.sql
+*.dump
+dump/

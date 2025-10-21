@@ -1,0 +1,124 @@
+/**
+ * ESTILOS DE INPUT COMPONENT
+ * 
+ * Estilos para inputs con validación y estados.
+ * 
+ * NUEVO: Archivo creado desde cero
+ */
+
+/* Contenedor del input */
+.input-wrapper {
+  margin-bottom: 1rem;
+}
+
+/* Label */
+.input-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+/* Contenedor con icono */
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Input base */
+.custom-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background: white;
+  color: #333;
+}
+
+.custom-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.custom-input::placeholder {
+  color: #999;
+}
+
+.custom-input:disabled {
+  background: #f8f9fa;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Input con icono */
+.input-with-icon.icon-left {
+  padding-left: 3rem;
+}
+
+.input-with-icon.icon-right {
+  padding-right: 3rem;
+}
+
+/* Ícono */
+.input-icon {
+  position: absolute;
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+.input-icon.icon-left {
+  left: 1rem;
+}
+
+.input-icon.icon-right {
+  right: 1rem;
+}
+
+/* Input con error */
+.input-error {
+  border-color: #dc3545;
+}
+
+.input-error:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15);
+}
+
+/* Mensaje de error */
+.input-error-message {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #dc3545;
+  display: flex;
+  align-items: center;
+}
+
+/* Texto de ayuda */
+.input-helper-text {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .custom-input {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.95rem;
+  }
+
+  .input-with-icon.icon-left {
+    padding-left: 2.5rem;
+  }
+
+  .input-with-icon.icon-right {
+    padding-right: 2.5rem;
+  }
+}

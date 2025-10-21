@@ -1,0 +1,165 @@
+/**
+ * ESTILOS DE BUTTON COMPONENT
+ * 
+ * Estilos personalizados para botones con diferentes variantes.
+ * 
+ * NUEVO: Archivo creado desde cero
+ */
+
+/* Estilos base */
+.custom-button {
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+}
+
+.custom-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Tamaños */
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.btn-md {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+}
+
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+}
+
+/* Ancho completo */
+.btn-full-width {
+  width: 100%;
+}
+
+/* Variantes */
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+.btn-success {
+  background: #28a745;
+  color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+  background: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.btn-warning {
+  background: #ffc107;
+  color: #212529;
+}
+
+.btn-warning:hover:not(:disabled) {
+  background: #e0a800;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+}
+
+.btn-info {
+  background: #17a2b8;
+  color: white;
+}
+
+.btn-info:hover:not(:disabled) {
+  background: #138496;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
+}
+
+.btn-light {
+  background: #f8f9fa;
+  color: #212529;
+  border: 1px solid #dee2e6;
+}
+
+.btn-light:hover:not(:disabled) {
+  background: #e2e6ea;
+  border-color: #dae0e5;
+}
+
+.btn-dark {
+  background: #343a40;
+  color: white;
+}
+
+.btn-dark:hover:not(:disabled) {
+  background: #23272b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(52, 58, 64, 0.3);
+}
+
+/* Estado de carga */
+.btn-loading {
+  pointer-events: none;
+}
+
+/* Animación de ripple (efecto de onda al hacer click) */
+.custom-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.custom-button:active::after {
+  width: 300px;
+  height: 300px;
+}
