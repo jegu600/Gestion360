@@ -1,0 +1,152 @@
+.dashboard-container {
+  background-color: #fdfbf9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: "Inter", sans-serif;
+  color: #2c2c2c;
+}
+
+/* ======== NAVBAR ======== */
+.navbar {
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 2rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.logo {
+  height: 70px; /*Tamaño del logo*/
+  width: auto;
+}
+
+.navbar-left h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* ======== DERECHA NAVBAR ======== */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.notification {
+  position: relative;
+}
+
+.bell {
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.notif-dot {
+  position: absolute;
+  top: -5px;
+  right: -6px;
+  background: red;
+  color: white;
+  font-size: 0.6rem;
+  padding: 2px 4px;
+  border-radius: 50%;
+}
+
+.user-info {
+  text-align: right;
+  line-height: 1.1;
+}
+
+.user-name {
+  font-weight: 600;
+  margin: 0;
+}
+
+.user-role {
+  font-size: 0.8rem;
+  color: gray;
+}
+
+.logout-btn {
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #333;
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background: #f4f4f4;
+}
+
+/* ======== CONTENIDO PRINCIPAL ======== */
+.dashboard-content {
+  padding: 2.5rem;
+  flex: 1;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.8rem;
+}
+
+.dashboard-header h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.dashboard-header p {
+  color: #777;
+  font-size: 0.95rem;
+}
+
+/* ======== BOTÓN NUEVA TAREA ======== */
+.new-task-btn {
+  background-color: #e25c39;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.new-task-btn:hover {
+  background-color: #c54d2f;
+}
+
+/* ======== CAJA VACÍA ======== */
+.dashboard-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty-box {
+  width: 100%;
+  min-height: 200px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #999;
+  font-size: 1rem;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.03);
+}
