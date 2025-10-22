@@ -1,3 +1,6 @@
+/* =========================
+   DASHBOARD CONTAINER
+   ========================= */
 .dashboard-container {
   background-color: #fdfbf9;
   min-height: 100vh;
@@ -7,7 +10,9 @@
   color: #2c2c2c;
 }
 
-/* ======== NAVBAR ======== */
+/* =========================
+   NAVBAR
+   ========================= */
 .navbar {
   background: #fff;
   display: flex;
@@ -24,7 +29,7 @@
 }
 
 .logo {
-  height: 70px; /*Tamaño del logo*/
+  height: 90px; /* Tamaño del logo */
   width: auto;
 }
 
@@ -34,7 +39,9 @@
   margin: 0;
 }
 
-/* ======== DERECHA NAVBAR ======== */
+/* =========================
+   NAVBAR DERECHA
+   ========================= */
 .navbar-right {
   display: flex;
   align-items: center;
@@ -90,7 +97,9 @@
   background: #f4f4f4;
 }
 
-/* ======== CONTENIDO PRINCIPAL ======== */
+/* =========================
+   CONTENIDO PRINCIPAL
+   ========================= */
 .dashboard-content {
   padding: 2.5rem;
   flex: 1;
@@ -114,7 +123,9 @@
   font-size: 0.95rem;
 }
 
-/* ======== BOTÓN NUEVA TAREA ======== */
+/* =========================
+   BOTÓN NUEVA TAREA
+   ========================= */
 .new-task-btn {
   background-color: #e25c39;
   color: white;
@@ -130,13 +141,16 @@
   background-color: #c54d2f;
 }
 
-/* ======== CAJA VACÍA ======== */
+/* =========================
+   DASHBOARD BODY
+   ========================= */
 .dashboard-body {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* Caja para cuando no hay tareas */
 .empty-box {
   width: 100%;
   min-height: 200px;
@@ -149,4 +163,113 @@
   color: #999;
   font-size: 1rem;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.03);
+}
+
+/* =========================
+   FORMULARIO CREAR TAREA
+   ========================= */
+.crear-tarea-container {
+  background-color: #fff9f1;
+  border-radius: 10px;
+  padding: 25px 30px;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Inter", sans-serif;
+  color: #2c2c2c;
+}
+
+.crear-tarea-container h2 {
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: #2c2c2c;
+}
+
+/* =========================
+   FORM GROUPS
+   ========================= */
+.crear-tarea-form .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.crear-tarea-form label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+  color: #4a4a4a;
+}
+
+/* Inputs y textarea */
+.crear-tarea-form input[type="text"],
+.crear-tarea-form input[type="date"],
+.crear-tarea-form select,
+.crear-tarea-form textarea {
+  border: 1px solid #f0d7b4;
+  background-color: #fff6e6;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  color: #6f5e3e;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.3s ease;
+  resize: vertical;
+  min-height: 44px;
+  font-family: "Inter", sans-serif;
+}
+
+.crear-tarea-form textarea {
+  min-height: 80px;
+}
+
+.crear-tarea-form input:focus,
+.crear-tarea-form select:focus,
+.crear-tarea-form textarea:focus {
+  border-color: #e18a44;
+  background-color: #fff3d1;
+}
+
+/* =========================
+   BOTONES DEL FORMULARIO
+   ========================= */
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.save-btn,
+.cancel-btn {
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 10px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+  font-family: "Inter", sans-serif;
+}
+
+.cancel-btn {
+  background-color: #fff6e6;
+  color: #7e6a43;
+  border: 1px solid #d4b784;
+}
+
+.cancel-btn:hover {
+  background-color: #f1e3cd;
+}
+
+.save-btn {
+  background-color: #eb6a31;
+  color: #fff;
+  box-shadow: 0 4px 6px rgba(235, 106, 49, 0.3);
+}
+
+.save-btn:hover {
+  background-color: #d45a27;
 }
