@@ -12,6 +12,8 @@ import { useAuth } from '../../context/AuthContext';
 import { useForm, validaciones } from '../../hooks/useForm';
 import type { LoginData, FormErrors } from '../../types';
 import './LoginPages.css';
+import { Button } from '../../components/common/Button';
+
 
 export const LoginPages = () => {
   const navigate = useNavigate();
@@ -147,12 +149,11 @@ export const LoginPages = () => {
           </div>
 
           {/* BOTÓN SUBMIT */}
-          <button
+          <Button
             type="submit"
             className="btn-submit"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
+            disabled={isSubmitting}>
+              {isSubmitting ? (
               <>
                 <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                 Iniciando sesión...
@@ -160,7 +161,8 @@ export const LoginPages = () => {
             ) : (
               'Iniciar Sesión'
             )}
-          </button>
+
+          </Button>
 
           {/* LINK A REGISTRO */}
           <div className="login-footer">

@@ -5,6 +5,8 @@
  * Asegura type safety en toda la aplicación.
  */
 
+import type { Key } from "react";
+
 // ========================================
 // USUARIO
 // ========================================
@@ -27,6 +29,7 @@ export type EstadoTarea = 'Pendiente' | 'En_progreso' | 'Completada' | 'Cancelad
 export type PrioridadTarea = 'Baja' | 'Media' | 'Alta' | 'Urgente';
 
 export interface Tarea {
+  _id: Key | null | undefined;
   id?: string;
   titulo: string;
   descripcion: string;

@@ -13,6 +13,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useForm, validaciones } from '../../hooks/useForm';
 import type { RegisterData, FormErrors } from '../../types';
 import './RegistroPage.css';
+import { Button } from '../../components/common/Button';
 
 // Interfaz extendida para incluir confirmación de contraseña
 interface RegisterFormData extends RegisterData {
@@ -122,6 +123,9 @@ export const RegistroPage = () => {
           <div className="alert alert-danger alert-dismissible fade show" role="alert">
             <i className="fas fa-exclamation-circle me-2"></i>
             {authState.errorMessage}
+            <Button>
+              
+            </Button>
             <button
               type="button"
               className="btn-close"
@@ -255,12 +259,11 @@ export const RegistroPage = () => {
 
           {/* BOTÓN SUBMIT */}
           <div className="d-grid mb-3">
-            <button
+            <Button
               type="submit"
               className="btn btn-primary btn-lg"
               disabled={isSubmitting}
-            >
-              {isSubmitting ? (
+            >{isSubmitting ? (
                 <>
                   <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                   Registrando...
@@ -270,8 +273,8 @@ export const RegistroPage = () => {
                   <i className="fas fa-user-plus me-2"></i>
                   Registrarse
                 </>
-              )}
-            </button>
+              )}</Button>
+            
           </div>
 
           {/* TÉRMINOS Y CONDICIONES */}

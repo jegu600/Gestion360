@@ -1,0 +1,200 @@
+/**
+ * DASHBOARD PAGE STYLES - ESTILO MOCKUP
+ * 
+ * Diseño limpio y minimalista según mockup proporcionado.
+ * Fondo crema/beige con formulario naranja.
+ */
+
+/* Página principal */
+.dashboard-page {
+  min-height: 100vh;
+  background: #fdfbf9;
+}
+
+/* Contenedor del dashboard */
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2.5rem;
+}
+
+/* Header del dashboard */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.header-text {
+  flex: 1;
+}
+
+.dashboard-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c2c2c;
+  margin: 0 0 0.5rem 0;
+}
+
+.dashboard-subtitle {
+  font-size: 0.95rem;
+  color: #777;
+  margin: 0;
+}
+
+/* Cuerpo del dashboard */
+.dashboard-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+/* Estado vacío */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.empty-icon {
+  font-size: 4rem;
+  color: #ddd;
+  margin-bottom: 1rem;
+}
+
+.empty-text {
+  font-size: 1.1rem;
+  color: #999;
+  margin: 0 0 0.5rem 0;
+  font-weight: 500;
+}
+
+.empty-hint {
+  font-size: 0.9rem;
+  color: #bbb;
+  margin: 0;
+}
+
+/* Panel de crear tarea */
+.crear-tarea-panel {
+  background: #fff9f1;
+  border-radius: 12px;
+  padding: 2rem 2.5rem;
+  max-width: 720px;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.panel-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2c2c2c;
+  margin: 0 0 1.5rem 0;
+}
+
+/* Formulario */
+.tarea-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #4a4a4a;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  border: 1px solid #f0d7b4;
+  background: #fff6e6;
+  border-radius: 8px;
+  color: #6f5e3e;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #e18a44;
+  background: #fff3d1;
+}
+
+/* Fila de formulario (dos columnas) */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+/* Botones del formulario */
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Override button styles for form */
+.form-buttons .custom-button {
+  min-width: 120px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1.5rem;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .dashboard-title {
+    font-size: 1.5rem;
+  }
+
+  .crear-tarea-panel {
+    padding: 1.5rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-buttons {
+    flex-direction: column;
+  }
+
+  .form-buttons .custom-button {
+    width: 100%;
+  }
+}
