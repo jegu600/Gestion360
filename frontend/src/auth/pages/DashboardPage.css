@@ -1,8 +1,8 @@
 /**
- * DASHBOARD PAGE STYLES - ESTILO MOCKUP
+ * DASHBOARD PAGE STYLES - ESTILO MOCKUP REFACTORIZADO
  * 
- * Diseño limpio y minimalista según mockup proporcionado.
- * Fondo crema/beige con formulario naranja.
+ * Diseño limpio y minimalista con componentes reutilizables.
+ * Fondo beige/crema con tarjetas blancas.
  */
 
 /* Página principal */
@@ -15,15 +15,16 @@
 .dashboard-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2.5rem;
+  padding: 2rem;
 }
 
 /* Header del dashboard */
 .dashboard-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 2rem;
+  gap: 2rem;
 }
 
 .header-text {
@@ -31,170 +32,486 @@
 }
 
 .dashboard-title {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 700;
-  color: #2c2c2c;
+  color: #1a1a1a;
   margin: 0 0 0.5rem 0;
 }
 
 .dashboard-subtitle {
-  font-size: 0.95rem;
-  color: #777;
+  font-size: 1rem;
+  color: #6c757d;
+  margin: 0 0 0.5rem 0;
+}
+
+.dashboard-user {
+  font-size: 0.875rem;
+  color: #495057;
   margin: 0;
+  font-weight: 500;
+}
+
+/* Estadísticas rápidas */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.stat-value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #eb6a31;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.875rem;
+  color: #6c757d;
+  font-weight: 500;
 }
 
 /* Cuerpo del dashboard */
 .dashboard-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
+  margin-top: 2rem;
 }
 
 /* Estado vacío */
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
-  background: white;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 600px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .empty-icon {
-  font-size: 4rem;
-  color: #ddd;
-  margin-bottom: 1rem;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, #eb6a31 0%, #f59c6a 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: white;
+}
+
+.empty-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem 0;
 }
 
 .empty-text {
-  font-size: 1.1rem;
-  color: #999;
-  margin: 0 0 0.5rem 0;
-  font-weight: 500;
-}
-
-.empty-hint {
-  font-size: 0.9rem;
-  color: #bbb;
+  font-size: 1rem;
+  color: #6c757d;
   margin: 0;
 }
 
-/* Panel de crear tarea */
-.crear-tarea-panel {
-  background: #fff9f1;
-  border-radius: 12px;
-  padding: 2rem 2.5rem;
-  max-width: 720px;
-  width: 100%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.panel-title {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #2c2c2c;
-  margin: 0 0 1.5rem 0;
-}
-
-/* Formulario */
-.tarea-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.form-group label {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #4a4a4a;
-}
-
-.form-input,
-.form-textarea,
-.form-select {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  font-size: 0.95rem;
-  border: 1px solid #f0d7b4;
-  background: #fff6e6;
-  border-radius: 8px;
-  color: #6f5e3e;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  font-family: 'Inter', sans-serif;
-}
-
-.form-textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-.form-input:focus,
-.form-textarea:focus,
-.form-select:focus {
-  outline: none;
-  border-color: #e18a44;
-  background: #fff3d1;
-}
-
-/* Fila de formulario (dos columnas) */
-.form-row {
+/* Grid de tareas */
+.tareas-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
 }
 
-/* Botones del formulario */
-.form-buttons {
+/* Card de tarea */
+.tarea-card {
+  padding: 0.5rem;
+}
+
+.tarea-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 1rem;
-  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
-/* Override button styles for form */
-.form-buttons .custom-button {
-  min-width: 120px;
+.tarea-titulo {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+  flex: 1;
+  word-break: break-word;
+}
+
+.tarea-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.badge-pendiente {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.badge-en-progreso {
+  background: #cfe2ff;
+  color: #084298;
+}
+
+.badge-completada {
+  background: #d1e7dd;
+  color: #0a3622;
+}
+
+.tarea-descripcion {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tarea-responsable {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.tarea-responsable i {
+  color: #eb6a31;
+  font-size: 1rem;
+}
+
+.tarea-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.tarea-fecha {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.tarea-fecha i {
+  color: #eb6a31;
 }
 
 /* Responsive */
+@media (max-width: 992px) {
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tareas-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .dashboard-container {
-    padding: 1.5rem;
+    padding: 1rem;
   }
 
   .dashboard-header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+    align-items: stretch;
   }
 
   .dashboard-title {
     font-size: 1.5rem;
   }
 
-  .crear-tarea-panel {
-    padding: 1.5rem;
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
 
-  .form-row {
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .tareas-grid {
     grid-template-columns: 1fr;
   }
 
-  .form-buttons {
-    flex-direction: column;
+  .empty-icon {
+    width: 80px;
+    height: 80px;
+    font-size: 2.5rem;
   }
 
-  .form-buttons .custom-button {
+  .empty-title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .dashboard-title {
+    font-size: 1.25rem;
+  }
+
+  .dashboard-subtitle {
+    font-size: 0.875rem;
+  }
+
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+  }
+
+  .empty-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+  }
+
+  .empty-title {
+    font-size: 1rem;
+  }
+
+  .empty-text {
+    font-size: 0.875rem;
+  }
+}
+
+.stat-icon-progress {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.stat-icon-completed {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin: 0 0 0.25rem 0;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+/* Tareas próximas */
+.tareas-proximas {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tarea-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #0d6efd;
+  transition: all 0.3s ease;
+  gap: 1rem;
+}
+
+.tarea-item:hover {
+  background: #e9ecef;
+  transform: translateX(4px);
+}
+
+.tarea-item.tarea-urgente {
+  border-left-color: #dc3545;
+  background: #fff5f5;
+}
+
+.tarea-item.tarea-urgente:hover {
+  background: #ffe8e8;
+}
+
+.tarea-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.tarea-titulo {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 0.25rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tarea-descripcion {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tarea-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.tarea-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  background: white;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #495057;
+  border: 1px solid #dee2e6;
+  font-weight: 500;
+}
+
+.tarea-badge.badge-urgente {
+  background: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+.dias-restantes {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+.dias-restantes.dias-urgente {
+  color: #dc3545;
+}
+
+/* Estado vacío */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: white;
+}
+
+.empty-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem 0;
+}
+
+.empty-message {
+  font-size: 1rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-title {
+    font-size: 1.5rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .tarea-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tarea-meta {
     width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .dashboard-title {
+    font-size: 1.25rem;
+  }
+
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+  }
+
+  .empty-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+  }
+
+  .empty-title {
+    font-size: 1.25rem;
   }
 }

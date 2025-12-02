@@ -1,10 +1,5 @@
 /**
  * CONTROLLER DE NOTIFICACIONES
- * 
- * Este controlador maneja todas las operaciones relacionadas con notificaciones.
- * las notificaciones se crean automáticamente cuando ocurren eventos en las tareas.
- * 
- * archivo para manejar la lógica de notificaciones
  */
 
 const { response } = require('express');
@@ -12,10 +7,6 @@ const notificacionModel = require('../models/notificacionModel');
 
 /**
  * OBTENER NOTIFICACIONES DEL USUARIO
- * 
- * Obtiene todas las notificaciones del usuario autenticado.
- * Se pueden filtrar por estado (leída/no leída).
- * Ordenadas por fecha (más recientes primero).
  */
 const obtenerNotificaciones = async (req, res = response) => {
     const uid = req.uid; // Usuario autenticado
@@ -93,9 +84,6 @@ const obtenerNotificacionesNoLeidas = async (req, res = response) => {
 
 /**
  * MARCAR NOTIFICACIÓN COMO LEÍDA
- * 
- * Cambia el estado de una notificación a leída.
- * Solo el propietario de la notificación puede marcarla como leída.
  */
 const marcarComoLeida = async (req, res = response) => {
     const notificacionId = req.params.id;

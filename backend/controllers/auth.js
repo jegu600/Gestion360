@@ -103,7 +103,12 @@ const loginUsuario = async (req, res = response) => {
             ok: false,
             msg: 'Error, comuniquese con el administrador'
         });
-
+        res.json({
+       ok: true,
+       token,
+       uid,    
+       nombre, 
+   });
     }
 
 }

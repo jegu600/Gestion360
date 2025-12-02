@@ -1,0 +1,65 @@
+.task-board {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    height: calc(100vh - 200px);
+    /* Adjust based on header/footer */
+}
+
+.board-column {
+    flex: 1;
+    min-width: 300px;
+    background-color: var(--color-background-secondary);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.column-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 12px 12px 0 0;
+    backdrop-filter: blur(4px);
+}
+
+.column-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.task-count {
+    background-color: var(--color-surface);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+}
+
+.column-content {
+    padding: 1rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.board-loading,
+.board-error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    font-size: 1.2rem;
+    color: var(--color-text-secondary);
+}
+
+.board-error {
+    color: var(--color-danger);
+}

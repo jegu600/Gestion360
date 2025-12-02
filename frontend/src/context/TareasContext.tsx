@@ -1,225 +1,169 @@
-/**
- * TAREAS CONTEXT
- * 
- * Maneja el estado global de tareas.
- * Provee funciones CRUD y filtrado de tareas.
- */
+// CONTEXT SIMPLIFICADO Y CONECTADO
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import type { Tarea, TareasContextType, TareaFormData, EstadoTarea, FiltrosTareas } from '../types';
+import type { Tarea, TareaFormData, Usuario, EstadoTarea } from '../types';
 import * as tareasService from '../services/tareasService';
+import * as usuariosService from '../services/usuariosService';
 
-// ========================================
-// CONTEXT
-// ========================================
+interface TareasContextType {
+  tareas: Tarea[];
+  loading: boolean;
+  error: string | null;
+  usuarios: Usuario[];
+  loadingUsuarios: boolean;
+
+  obtenerTareas: () => Promise<void>;
+  obtenerTareaPorId: (id: string) => Promise<Tarea | null>;
+  crearTarea: (tarea: TareaFormData) => Promise<boolean>;
+  actualizarTarea: (id: string, tarea: TareaFormData) => Promise<boolean>;
+  cambiarEstadoTarea: (id: string, estado: EstadoTarea) => Promise<boolean>;
+  eliminarTarea: (id: string) => Promise<boolean>;
+
+  obtenerUsuarios: () => Promise<void>;
+  filtrarPorEstado: (estado: EstadoTarea) => Tarea[];
+  limpiarError: () => void;
+}
 
 const TareasContext = createContext<TareasContextType | undefined>(undefined);
 
-// ========================================
-// PROVIDER
-// ========================================
-
-interface TareasProviderProps {
-  children: ReactNode;
-}
-
-export const TareasProvider = ({ children }: TareasProviderProps) => {
-  // Estado
+export const TareasProvider = ({ children }: { children: ReactNode }) => {
   const [tareas, setTareas] = useState<Tarea[]>([]);
-  const [tareaActual, setTareaActual] = useState<Tarea | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * OBTENER TODAS LAS TAREAS
-   */
-  const obtenerTareas = async (): Promise<void> => {
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [loadingUsuarios, setLoadingUsuarios] = useState(false);
+
+  useEffect(() => {
+    obtenerUsuarios();
+  }, []);
+
+  const normalizeResponse = <T,>(res: any, field: string): T | null => {
+    if (!res) return null;
+    if (res.ok && res[field]) return res[field] as T;
+    if (Array.isArray(res)) return res as T;
+    return null;
+  };
+
+  const obtenerUsuarios = async () => {
+    setLoadingUsuarios(true);
     try {
-      setLoading(true);
-      setError(null);
-      const data = await tareasService.obtenerTareas();
-      setTareas(data);
-    } catch (err: any) {
-      setError(err.message || 'Error al obtener las tareas');
-      console.error('Error al obtener tareas:', err);
+      const response = await usuariosService.obtenerUsuarios();
+      const lista = normalizeResponse<Usuario[]>(response, 'usuarios');
+      if (lista) setUsuarios(lista);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingUsuarios(false);
+    }
+  };
+
+  const obtenerTareas = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await tareasService.obtenerTareas();
+      const lista = normalizeResponse<Tarea[]>(response, 'tareas');
+      if (lista) setTareas(lista);
+    } catch {
+      setError('Error al conectar con el servidor');
     } finally {
       setLoading(false);
     }
   };
 
-  /**
-   * OBTENER TAREA POR ID
-   */
-  const obtenerTareaPorId = async (id: string): Promise<void> => {
+  const obtenerTareaPorId = async (id: string): Promise<Tarea | null> => {
     try {
-      setLoading(true);
-      setError(null);
-      const tarea = await tareasService.obtenerTareaPorId(id);
-      setTareaActual(tarea);
-    } catch (err: any) {
-      setError(err.message || 'Error al obtener la tarea');
-      console.error('Error al obtener tarea:', err);
-    } finally {
-      setLoading(false);
+      const response = await tareasService.obtenerTareaPorId(id);
+      return normalizeResponse<Tarea>(response, 'tarea');
+    } catch {
+      setError('Error al conectar con el servidor');
+      return null;
     }
   };
 
-  /**
-   * CREAR TAREA
-   */
-  const crearTarea = async (tareaData: TareaFormData): Promise<boolean> => {
+  const crearTarea = async (data: TareaFormData): Promise<boolean> => {
     try {
-      setLoading(true);
-      setError(null);
-      const nuevaTarea = await tareasService.crearTarea(tareaData);
-      
-      // Agregar la nueva tarea al estado
-      setTareas(prev => [nuevaTarea, ...prev]);
-      
-      return true;
-    } catch (err: any) {
-      setError(err.message || 'Error al crear la tarea');
-      console.error('Error al crear tarea:', err);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /**
-   * ACTUALIZAR TAREA
-   */
-  const actualizarTarea = async (
-    id: string,
-    tareaData: Partial<TareaFormData>
-  ): Promise<boolean> => {
-    try {
-      setLoading(true);
-      setError(null);
-      const tareaActualizada = await tareasService.actualizarTarea(id, tareaData);
-      
-      // Actualizar en el estado
-      setTareas(prev =>
-        prev.map(tarea => (tarea.id === id ? tareaActualizada : tarea))
-      );
-      
-      // Si es la tarea actual, actualizarla también
-      if (tareaActual?.id === id) {
-        setTareaActual(tareaActualizada);
+      const response = await tareasService.crearTarea(data);
+      const nueva = normalizeResponse<Tarea>(response, 'tarea');
+      if (nueva) {
+        setTareas(prev => [nueva, ...prev]);
+        return true;
       }
-      
-      return true;
-    } catch (err: any) {
-      setError(err.message || 'Error al actualizar la tarea');
-      console.error('Error al actualizar tarea:', err);
       return false;
-    } finally {
-      setLoading(false);
+    } catch {
+      return false;
     }
   };
 
-  /**
-   * CAMBIAR ESTADO DE TAREA
-   */
-  const cambiarEstado = async (id: string, estado: EstadoTarea): Promise<boolean> => {
+  const actualizarTarea = async (id: string, data: TareaFormData): Promise<boolean> => {
     try {
-      setLoading(true);
-      setError(null);
-      const tareaActualizada = await tareasService.cambiarEstadoTarea(id, estado);
-      
-      // Actualizar en el estado
-      setTareas(prev =>
-        prev.map(tarea => (tarea.id === id ? tareaActualizada : tarea))
-      );
-      
+      const response = await tareasService.actualizarTarea(id, data);
+      const actualizada = normalizeResponse<Tarea>(response, 'tarea');
+      if (!actualizada) return false;
+      setTareas(prev => prev.map(t => t._id === id ? actualizada : t));
       return true;
-    } catch (err: any) {
-      setError(err.message || 'Error al cambiar el estado');
-      console.error('Error al cambiar estado:', err);
+    } catch {
       return false;
-    } finally {
-      setLoading(false);
     }
   };
 
-  /**
-   * ELIMINAR TAREA
-   */
+  const cambiarEstadoTarea = async (id: string, estado: EstadoTarea): Promise<boolean> => {
+    try {
+      const response = await tareasService.cambiarEstadoTarea(id, estado);
+      const actualizada = normalizeResponse<Tarea>(response, 'tarea');
+      if (!actualizada) return false;
+      setTareas(prev => prev.map(t => t._id === id ? actualizada : t));
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   const eliminarTarea = async (id: string): Promise<boolean> => {
     try {
-      setLoading(true);
-      setError(null);
-      await tareasService.eliminarTarea(id);
-      
-      // Eliminar del estado
-      setTareas(prev => prev.filter(tarea => tarea.id !== id));
-      
-      // Si es la tarea actual, limpiarla
-      if (tareaActual?.id === id) {
-        setTareaActual(null);
+      const response: any = await tareasService.eliminarTarea(id);
+      if (response?.ok) {
+        setTareas(prev => prev.filter(t => t._id !== id));
+        return true;
       }
-      
-      return true;
-    } catch (err: any) {
-      setError(err.message || 'Error al eliminar la tarea');
-      console.error('Error al eliminar tarea:', err);
       return false;
-    } finally {
-      setLoading(false);
+    } catch {
+      return false;
     }
   };
 
-  /**
-   * FILTRAR TAREAS
-   * 
-   * Filtra las tareas localmente según los criterios.
-   */
-  const filtrarTareas = (filtros: FiltrosTareas): Tarea[] => {
-    return tareasService.filtrarTareasLocal(tareas, filtros);
-  };
+  const filtrarPorEstado = (estado: EstadoTarea) => tareas.filter(t => t.estado === estado);
 
-  /**
-   * LIMPIAR TAREA ACTUAL
-   */
-  const limpiarTareaActual = () => {
-    setTareaActual(null);
-  };
+  const limpiarError = () => setError(null);
 
-  // Valor del contexto
-  const value: TareasContextType = {
-    tareas,
-    tareaActual,
-    loading,
-    error,
-    obtenerTareas,
-    obtenerTareaPorId,
-    crearTarea,
-    actualizarTarea,
-    cambiarEstado,
-    eliminarTarea,
-    filtrarTareas,
-    limpiarTareaActual,
-  };
+  return (
+    <TareasContext.Provider value={{
+      tareas,
+      loading,
+      error,
+      usuarios,
+      loadingUsuarios,
 
-  return <TareasContext.Provider value={value}>{children}</TareasContext.Provider>;
+      obtenerTareas,
+      obtenerTareaPorId,
+      crearTarea,
+      actualizarTarea,
+      cambiarEstadoTarea,
+      eliminarTarea,
+      obtenerUsuarios,
+
+      filtrarPorEstado,
+      limpiarError
+    }}>
+      {children}
+    </TareasContext.Provider>
+  );
 };
 
-// ========================================
-// HOOK PERSONALIZADO
-// ========================================
-
-/**
- * useTareas Hook
- * 
- * Hook para acceder al contexto de tareas.
- */
-export const useTareas = (): TareasContextType => {
-  const context = useContext(TareasContext);
-
-  if (!context) {
-    throw new Error('useTareas debe usarse dentro de TareasProvider');
-  }
-
-  return context;
+export const useTareas = () => {
+  const ctx = useContext(TareasContext);
+  if (!ctx) throw new Error('useTareas debe usarse dentro de TareasProvider');
+  return ctx;
 };

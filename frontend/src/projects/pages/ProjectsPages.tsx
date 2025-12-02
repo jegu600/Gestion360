@@ -1,34 +1,57 @@
-/**
- * PROJECTS PAGES
- * 
- * Router para las páginas del módulo de proyectos/tareas.
- * Maneja las rutas internas de la aplicación autenticada.
- * 
- * CAMBIO: Actualizado para usar estructura correcta con rutas
- */
-
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { DashboardPage } from '../../auth/pages/DashboardPage';
+import React, { useState, useRef } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import TaskBoard from '../components/TaskBoard';
+import TaskForm from '../components/TaskForm';
+import { Button } from '../../components/common/Button';
+import { MainLayout } from '../../components/layout/MainLayout';
+import './ProjectsPages.css';
 
 export const ProjectsPages = () => {
+  const { user } = useAuth();
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const boardRef = useRef<{ fetchTasks: () => void }>(null);
+
+  const handleTaskCreated = () => {
+    // Reload to refresh tasks
+    window.location.reload();
+  };
+
   return (
-    <Routes>
-      {/* Ruta principal - Dashboard */}
-      <Route path="/" element={<DashboardPage />} />
-      
-      {/* Rutas de tareas - Por implementar */}
-      {/* <Route path="/tareas" element={<TareasPage />} /> */}
-      {/* <Route path="/tareas/crear" element={<CrearTareaPage />} /> */}
-      {/* <Route path="/tareas/:id" element={<DetallesTareaPage />} /> */}
-      
-      {/* Rutas de notificaciones - Por implementar */}
-      {/* <Route path="/notificaciones" element={<NotificacionesPage />} /> */}
-      
-      {/* Rutas de perfil - Por implementar */}
-      {/* <Route path="/perfil" element={<PerfilPage />} /> */}
-      
-      {/* Cualquier otra ruta redirige al dashboard */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <MainLayout>
+      <div className="projects-page">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 className="fw-bold mb-1">Panel de Administración</h2>
+            <p className="text-muted mb-0">Gestiona y asigna tareas a tu equipo</p>
+          </div>
+          {!showCreateForm && user?.rol === 'admin' && (
+            <Button
+              variant="primary"
+              onClick={() => setShowCreateForm(true)}
+              style={{ backgroundColor: '#e76f51', borderColor: '#e76f51' }}
+            >
+              <i className="fas fa-plus me-2"></i>
+              Nueva Tarea
+            </Button>
+          )}
+        </div>
+
+        {showCreateForm ? (
+          <div className="card border-0 shadow-sm p-4 mb-4" style={{ borderRadius: '12px' }}>
+            <h4 className="mb-4">Crear Nueva Tarea</h4>
+            <TaskForm
+              isOpen={true}
+              onClose={() => setShowCreateForm(false)}
+              onSuccess={handleTaskCreated}
+              inline={true}
+            />
+          </div>
+        ) : (
+          <div className="page-content">
+            <TaskBoard />
+          </div>
+        )}
+      </div>
+    </MainLayout>
   );
 };

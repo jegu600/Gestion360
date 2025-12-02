@@ -28,8 +28,8 @@ const usuarioSchema = Schema({
         type: String,
         required: true,
         enum: ['admin', 'usuario'], // solo permite estos valores
-        default: 'usuario'    
-    }, 
+        default: 'usuario'
+    },
 
 
 }, {
@@ -37,6 +37,12 @@ const usuarioSchema = Schema({
     timestamps: true // agrega createdAt y updatedAt automáticamente
 });
 
+usuarioSchema.method('toJSON', function () {
+    const { __v, _id, password, ...object } = this.toObject();
+    object.uid = _id;
+    return object;
+});
 
 
-module.exports = model('usuarioModel', usuarioSchema);
+
+module.exports = model('Usuario', usuarioSchema);

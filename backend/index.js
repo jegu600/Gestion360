@@ -53,7 +53,8 @@ app.use('/api/tareas', require('./routes/tareas'));
 app.use('/api/notificaciones', require('./routes/notificaciones'));
 
 
-
+// Ruta de usuarios
+app.use('/api/usuarios', require('./routes/usuarios'));
 
 // Excuchar peticiones
 // listen(puerto, funcion que retorna cuando esta arriba)

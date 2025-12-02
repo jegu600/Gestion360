@@ -11,7 +11,7 @@ const { check } = require('express-validator');
 
 // Middlewares
 const { validarCampos } = require('../middlewares/validarCampos');
-const { validarJsonWT } = require('../middlewares/validarJWT');
+const { validarJWT } = require('../middlewares/validarJWT');
 
 // Controllers
 const {
@@ -29,7 +29,7 @@ const router = Router();
 /**
  * IMPORTANTE: Todas las rutas requieren autenticación JWT
  */
-router.use(validarJsonWT);
+router.use(validarJWT);
 
 /**
  * GET /api/notificaciones

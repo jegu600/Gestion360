@@ -18,14 +18,13 @@ import { Card } from '../../components/common/Card';
 import { Button } from '../../components/common/Button';
 import { Input } from '../../components/common/Input';
 import { Modal } from '../../components/common/Modal';
-import { Loader } from '../../components/common/Loader';
 import type { TareaFormData } from '../../types';
 import './DashboardPage.css';
 
 export const DashboardPage = () => {
   const auth = useAuth();
   const user = (auth as any).user;
-  const { tareas, loading, obtenerTareas, crearTarea } = useTareas();
+  const { tareas, crearTarea, usuarios, loadingUsuarios, obtenerTareas } = useTareas();
 
   // Estados para el modal y formulario
   const [showModal, setShowModal] = useState(false);
@@ -52,17 +51,10 @@ export const DashboardPage = () => {
     completadas: tareas.filter(t => String(t.estado) === 'completada').length,
   };
 
-  // Tareas próximas a vencer (próximos 7 días)
-  const tareasProximas = tareas
-    .filter(t => {
-      if (!t.fechaLimite || String(t.estado) === 'completada') return false;
-      const diasRestantes = Math.ceil(
-        (new Date(t.fechaLimite).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-      );
-      return diasRestantes >= 0 && diasRestantes <= 7;
-    })
-    .sort((a, b) => new Date(a.fechaLimite!).getTime() - new Date(b.fechaLimite!).getTime())
-    .slice(0, 5);
+  // Abrir modal
+  const handleNuevaTarea = () => {
+    setShowModal(true);
+  };
 
   // Manejar cambios en el formulario
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -138,34 +130,42 @@ export const DashboardPage = () => {
     e.preventDefault();
 
     if (!validateForm()) {
+      console.log('❌ Formulario inválido');
       return;
     }
+
+    console.log('📤 Datos del formulario a enviar:', formData);
 
     setIsSubmitting(true);
 
     try {
-      await crearTarea(formData);
+      const result = await crearTarea(formData);
+      console.log('📥 Resultado de crear tarea:', result);
       
-      // Resetear formulario y cerrar modal
-      setFormData({
-        titulo: '',
-        descripcion: '',
-        responsable: '',
-        fechaLimite: '',
-      });
-      setFormErrors({});
-      setTouchedFields({});
-      setShowModal(false);
+      if (result) {
+        console.log('✅ Tarea creada exitosamente');
+        
+        // Resetear formulario y cerrar modal
+        setFormData({
+          titulo: '',
+          descripcion: '',
+          responsable: '',
+          fechaLimite: '',
+        });
+        setFormErrors({});
+        setTouchedFields({});
+        setShowModal(false);
+        
+        // Recargar las tareas
+        await obtenerTareas();
+      } else {
+        console.error('❌ No se pudo crear la tarea');
+      }
     } catch (error) {
-      console.error('Error al crear tarea:', error);
+      console.error('❌ Error al crear tarea:', error);
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  // Abrir modal
-  const handleNuevaTarea = () => {
-    setShowModal(true);
   };
 
   // Cerrar modal y resetear
@@ -183,31 +183,61 @@ export const DashboardPage = () => {
     }
   };
 
-  // Formatear fecha
-  const formatearFecha = (fecha: string | Date | undefined | null) => {
-    if (!fecha) return '';
-    const date = fecha instanceof Date ? fecha : new Date(fecha);
-    if (isNaN(date.getTime())) return '';
-    return date.toLocaleDateString('es-ES', { 
-      day: 'numeric', 
-      month: 'short' 
-    });
-  };
+  // Renderizar el estado vacío
+  const renderEmptyState = () => (
+    <Card>
+      <div className="empty-state">
+        <div className="empty-icon">
+          <i className="fas fa-clipboard-list"></i>
+        </div>
+        <h3 className="empty-title">No hay tareas creadas todavía</h3>
+        <p className="empty-text">Haz clic en "Nueva Tarea" para comenzar</p>
+      </div>
+    </Card>
+  );
 
-  // Calcular días restantes
-  const calcularDiasRestantes = (fecha: string | Date | undefined | null) => {
-    if (!fecha) return Infinity; // o devuelve null/undefined según tu UI
-    const target = fecha instanceof Date ? fecha : new Date(fecha);
-    if (isNaN(target.getTime())) return Infinity;
-    const dias = Math.ceil(
-      (target.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-    );
-    return dias;
-  };
+  // Renderizar lista de tareas (cuando existan)
+  const renderTareasList = () => (
+    <div className="tareas-grid">
+      {tareas.map(tarea => {
+        // Obtener información del responsable
+        const responsable = typeof tarea.responsable === 'object' 
+          ? tarea.responsable 
+          : usuarios.find(u => u.uid === tarea.responsable);
 
-  if (loading) {
-    return <Loader fullscreen message="Cargando dashboard..." />;
-  }
+        return (
+          <Card key={tarea._id} hoverable>
+            <div className="tarea-card">
+              <div className="tarea-header">
+                <h3 className="tarea-titulo">{tarea.titulo}</h3>
+                <span className={`tarea-badge badge-${tarea.estado}`}>
+                  {tarea.estado}
+                </span>
+              </div>
+              <p className="tarea-descripcion">{tarea.descripcion}</p>
+              
+              {/* Información del responsable */}
+              {responsable && (
+                <div className="tarea-responsable">
+                  <i className="fas fa-user-circle me-2"></i>
+                  <span className="text-muted">{responsable.nombre}</span>
+                </div>
+              )}
+              
+              {tarea.fechaLimite && (
+                <div className="tarea-footer">
+                  <span className="tarea-fecha">
+                    <i className="far fa-calendar"></i>
+                    {new Date(tarea.fechaLimite).toLocaleDateString('es-ES')}
+                  </span>
+                </div>
+              )}
+            </div>
+          </Card>
+        );
+      })}
+    </div>
+  );
 
   return (
     <div className="dashboard-page">
@@ -216,15 +246,12 @@ export const DashboardPage = () => {
       <div className="dashboard-container">
         {/* Header */}
         <div className="dashboard-header">
-          <div>
-            <h1 className="dashboard-title">
-              Bienvenido, {user?.nombre}
-            </h1>
-            <p className="dashboard-subtitle">
-              Gestiona tus tareas y proyectos de manera eficiente
-            </p>
+          <div className="header-text">
+            <h1 className="dashboard-title">Panel de Administración</h1>
+            <p className="dashboard-subtitle">Gestiona y asigna tareas a tu equipo</p>
+            <p className="dashboard-user">Hola, {user?.nombre || 'Usuario'}</p>
           </div>
-          
+
           <Button
             variant="primary"
             size="lg"
@@ -235,105 +262,40 @@ export const DashboardPage = () => {
           </Button>
         </div>
 
-        {/* Estadísticas */}
-        <div className="stats-grid">
-          <Card hoverable>
-            <div className="stat-card">
-              <div className="stat-icon stat-icon-total">
-                <i className="fas fa-tasks"></i>
+        {/* Estadísticas rápidas */}
+        {tareas.length > 0 && (
+          <div className="stats-row">
+            <Card hoverable>
+              <div className="stat-item">
+                <span className="stat-value">{stats.total}</span>
+                <span className="stat-label">Total</span>
               </div>
-              <div className="stat-content">
-                <p className="stat-label">Total de Tareas</p>
-                <h3 className="stat-value">{stats.total}</h3>
+            </Card>
+            <Card hoverable>
+              <div className="stat-item">
+                <span className="stat-value">{stats.pendientes}</span>
+                <span className="stat-label">Pendientes</span>
               </div>
-            </div>
-          </Card>
-
-          <Card hoverable>
-            <div className="stat-card">
-              <div className="stat-icon stat-icon-pending">
-                <i className="fas fa-clock"></i>
+            </Card>
+            <Card hoverable>
+              <div className="stat-item">
+                <span className="stat-value">{stats.enProgreso}</span>
+                <span className="stat-label">En Progreso</span>
               </div>
-              <div className="stat-content">
-                <p className="stat-label">Pendientes</p>
-                <h3 className="stat-value">{stats.pendientes}</h3>
+            </Card>
+            <Card hoverable>
+              <div className="stat-item">
+                <span className="stat-value">{stats.completadas}</span>
+                <span className="stat-label">Completadas</span>
               </div>
-            </div>
-          </Card>
-
-          <Card hoverable>
-            <div className="stat-card">
-              <div className="stat-icon stat-icon-progress">
-                <i className="fas fa-spinner"></i>
-              </div>
-              <div className="stat-content">
-                <p className="stat-label">En Progreso</p>
-                <h3 className="stat-value">{stats.enProgreso}</h3>
-              </div>
-            </div>
-          </Card>
-
-          <Card hoverable>
-            <div className="stat-card">
-              <div className="stat-icon stat-icon-completed">
-                <i className="fas fa-check-circle"></i>
-              </div>
-              <div className="stat-content">
-                <p className="stat-label">Completadas</p>
-                <h3 className="stat-value">{stats.completadas}</h3>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* Tareas próximas a vencer */}
-        {tareasProximas.length > 0 ? (
-          <Card bordered>
-            <div className="card-header mb-3">
-              <h3 className="card-title">Tareas Próximas a Vencer</h3>
-            </div>
-            <div className="tareas-proximas">
-              {tareasProximas.map(tarea => {
-                const dias = calcularDiasRestantes(tarea.fechaLimite!);
-                const urgente = dias <= 2;
-
-                return (
-                  <div 
-                    key={tarea._id} 
-                    className={`tarea-item ${urgente ? 'tarea-urgente' : ''}`}
-                  >
-                    <div className="tarea-info">
-                      <h4 className="tarea-titulo">{tarea.titulo}</h4>
-                      <p className="tarea-descripcion">{tarea.descripcion}</p>
-                    </div>
-                    
-                    <div className="tarea-meta">
-                      <span className={`tarea-badge ${urgente ? 'badge-urgente' : 'badge-normal'}`}>
-                        <i className="far fa-calendar"></i>
-                        {formatearFecha(tarea.fechaLimite!)}
-                      </span>
-                      <span className={`dias-restantes ${urgente ? 'dias-urgente' : ''}`}>
-                        {dias === 0 ? 'Hoy' : dias === 1 ? 'Mañana' : `${dias} días`}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </Card>
-        ) : (
-          <Card bordered>
-            <div className="empty-state">
-              <div className="empty-icon">
-                <i className="fas fa-check-circle"></i>
-              </div>
-              <h3 className="empty-title">¡Todo bajo control!</h3>
-              <p className="empty-message">
-                No tienes tareas próximas a vencer. ¡Buen trabajo!
-              </p>
-            </div>
-          </Card>
+            </Card>
+          </div>
         )}
+
+        {/* Contenido principal */}
+        <div className="dashboard-body">
+          {tareas.length === 0 ? renderEmptyState() : renderTareasList()}
+        </div>
       </div>
 
       {/* Modal para crear tarea */}
@@ -356,7 +318,7 @@ export const DashboardPage = () => {
             touched={touchedFields.titulo}
             required
             icon="fas fa-heading"
-            placeholder="Ej: Implementar login"
+            placeholder="Ej: Implementar módulo de usuarios"
           />
 
           {/* Descripción */}
@@ -373,7 +335,7 @@ export const DashboardPage = () => {
               onChange={handleChange}
               onBlur={() => handleBlur('descripcion')}
               rows={4}
-              placeholder="Describe la tarea..."
+              placeholder="Describe los detalles de la tarea..."
               required
             />
             {touchedFields.descripcion && formErrors.descripcion && (
@@ -385,7 +347,7 @@ export const DashboardPage = () => {
 
           {/* Fecha límite */}
           <Input
-            label="Fecha límite"
+            label="Fecha de vencimiento"
             type="date"
             name="fechaLimite"
             value={formData.fechaLimite}
@@ -398,17 +360,35 @@ export const DashboardPage = () => {
             min={new Date().toISOString().split('T')[0]}
           />
 
-          {/* Responsable (opcional) */}
-          <Input
-            label="Responsable (opcional)"
-            type="text"
-            name="responsable"
-            value={formData.responsable}
-            onChange={handleChange}
-            icon="fas fa-user"
-            placeholder="ID del usuario responsable"
-            helperText="Deja vacío para asignarte a ti mismo"
-          />
+          {/* Responsable (select de usuarios) */}
+          <div className="mb-3">
+            <label className="form-label fw-semibold">
+              Asignar a
+            </label>
+            <div className="input-group">
+              <span className="input-group-text">
+                <i className="fas fa-user"></i>
+              </span>
+              <select
+                className="form-select"
+                name="responsable"
+                value={formData.responsable}
+                onChange={handleChange}
+                disabled={loadingUsuarios}
+              >
+                <option value="">Asignarme a mí</option>
+                {usuarios.map(usuario => (
+                  <option key={usuario.uid} value={usuario.uid}>
+                    {usuario.nombre} ({usuario.correo})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-text">
+              <i className="fas fa-info-circle me-1"></i>
+              Si no seleccionas ninguno, la tarea se te asignará automáticamente
+            </div>
+          </div>
 
           {/* Botones */}
           <div className="d-flex gap-2 justify-content-end mt-4">
@@ -417,14 +397,14 @@ export const DashboardPage = () => {
               onClick={handleCloseModal}
               disabled={isSubmitting}
             >
-              Cancelar
+              ✕ Cancelar
             </Button>
             
             <Button
               type="submit"
               variant="primary"
               isLoading={isSubmitting}
-              icon="fas fa-save"
+              icon="fas fa-check"
             >
               Crear Tarea
             </Button>

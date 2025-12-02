@@ -1,399 +1,397 @@
 /**
  * CONTROLLER DE TAREAS
- * 
- * Este controlador maneja todas las operaciones CRUD para las tareas.
- * Cada función está protegida por el middleware de JWT, por lo que solo
- * usuarios autenticados pueden acceder.
- * 
  */
 
-const { response } = require('express');
-const tareaModel = require('../models/tareaModel');
-const notificacionModel = require('../models/notificacionModel');
+const Tarea = require('../models/tareaModel');
+const Usuario = require('../models/usuarioModel');
+const { crearNotificacion } = require('./notificaciones');
 
 /**
- * OBTENER TODAS LAS TAREAS
- * 
- * Obtiene todas las tareas donde el usuario autenticado es:
- * - El responsable de la tarea
- * - El creador de la tarea
- * 
- * Además, popula la información del responsable para mostrar sus datos
+ * OBTENER TODAS LAS TAREAS DEL USUARIO
  */
-const obtenerTareas = async (req, res = response) => {
-    const uid = req.uid; // ID del usuario autenticado (viene del middleware JWT)
+const obtenerTareas = async (req, res) => {
+  try {
 
-    try {
-        // Buscar tareas donde el usuario sea responsable O creador
-        const tareas = await tareaModel.find({
-            $or: [
-                { responsable: uid },
-                { creadoPor: uid }
-            ]
-        })
-        .populate('responsable', 'nombre correo') // Traer datos del responsable
-        .populate('creadoPor', 'nombre correo')   // Traer datos del creador
-        .sort({ fechaCreacion: -1 }); // Ordenar por fecha (más recientes primero)
 
-        res.json({
-            ok: true,
-            tareas
-        });
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok: false,
-            msg: 'Error al obtener las tareas, contacte al administrador'
-        });
+    // Si es admin, ve todas las tareas. Si es usuario, solo las asignadas.
+    let query = {};
+    if (req.usuario.rol !== 'admin') {
+      query = { responsable: req.usuario._id };
     }
+
+    const tareas = await Tarea.find(query)
+      .populate('responsable', 'nombre correo rol')
+      .sort({ fechaCreacion: -1 });
+
+    res.status(200).json({
+      ok: true,
+      tareas,
+    });
+  } catch (error) {
+    console.error('Error al obtener tareas:', error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Error al obtener tareas',
+      error: error.message,
+    });
+  }
 };
 
 /**
  * OBTENER TAREA POR ID
- * 
- * Obtiene una tarea específica por su ID.
- * Valida que el usuario tenga permiso para ver la tarea.
  */
-const obtenerTareaPorId = async (req, res = response) => {
-    const tareaId = req.params.id;
-    const uid = req.uid;
+const obtenerTareaPorId = async (req, res) => {
+  const { id } = req.params;
 
-    try {
-        const tarea = await tareaModel.findById(tareaId)
-            .populate('responsable', 'nombre correo')
-            .populate('creadoPor', 'nombre correo');
+  try {
+    const tarea = await Tarea.findById(id).populate('responsable', 'nombre correo rol');
 
-        // Verificar que la tarea existe
-        if (!tarea) {
-            return res.status(404).json({
-                ok: false,
-                msg: 'Tarea no encontrada'
-            });
-        }
-
-        // Verificar que el usuario tenga permiso para ver esta tarea
-        if (tarea.responsable._id.toString() !== uid && tarea.creadoPor._id.toString() !== uid) {
-            return res.status(401).json({
-                ok: false,
-                msg: 'No tiene permisos para ver esta tarea'
-            });
-        }
-
-        res.json({
-            ok: true,
-            tarea
-        });
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok: false,
-            msg: 'Error al obtener la tarea'
-        });
+    if (!tarea) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'Tarea no encontrada',
+      });
     }
-};
 
-/**
- * CREAR NUEVA TAREA
- * 
- * Crea una nueva tarea y genera una notificación para el responsable
- * si es diferente del creador.
- */
-const crearTarea = async (req, res = response) => {
-    const uid = req.uid; // Usuario que crea la tarea
-
-    try {
-        // Crear instancia del modelo con los datos del body
-        const tarea = new tareaModel({
-            ...req.body,
-            creadoPor: uid // Asignar el creador
-        });
-
-        // Guardar en la base de datos
-        const tareaGuardada = await tarea.save();
-
-        // Popular los datos para la respuesta
-        await tareaGuardada.populate('responsable', 'nombre correo');
-        await tareaGuardada.populate('creadoPor', 'nombre correo');
-
-        // Crear notificación para el responsable (si no es el mismo que creó la tarea)
-        if (tareaGuardada.responsable._id.toString() !== uid) {
-            const notificacion = new notificacionModel({
-                mensaje: `Se te ha asignado una nueva tarea: "${tareaGuardada.titulo}"`,
-                usuario_id: tareaGuardada.responsable._id,
-                tarea_id: tareaGuardada._id,
-                tipo: 'tarea_asignada',
-                prioridad: tareaGuardada.prioridad === 'Urgente' ? 'alta' : 'media'
-            });
-
-            await notificacion.save();
-        }
-
-        res.status(201).json({
-            ok: true,
-            tarea: tareaGuardada,
-            msg: 'Tarea creada exitosamente'
-        });
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok: false,
-            msg: 'Error al crear la tarea'
-        });
+    if (tarea.responsable._id.toString() !== req.usuario._id.toString()) {
+      return res.status(403).json({
+        ok: false,
+        msg: 'No tienes permiso para ver esta tarea',
+      });
     }
-};
 
-/**
- * ACTUALIZAR TAREA
- * 
- * Actualiza una tarea existente.
- * Solo el creador o el responsable pueden actualizar la tarea.
- */
-const actualizarTarea = async (req, res = response) => {
-    const tareaId = req.params.id;
-    const uid = req.uid;
-
-    try {
-        // Verificar que la tarea existe
-        const tarea = await tareaModel.findById(tareaId);
-
-        if (!tarea) {
-            return res.status(404).json({
-                ok: false,
-                msg: 'Tarea no encontrada'
-            });
-        }
-
-        // Verificar permisos (solo creador o responsable pueden actualizar)
-        if (tarea.creadoPor.toString() !== uid && tarea.responsable.toString() !== uid) {
-            return res.status(401).json({
-                ok: false,
-                msg: 'No tiene permisos para actualizar esta tarea'
-            });
-        }
-
-        // Guardar el estado anterior para detectar cambios
-        const estadoAnterior = tarea.estado;
-        const responsableAnterior = tarea.responsable.toString();
-
-        // Actualizar la tarea
-        const tareaActualizada = await tareaModel.findByIdAndUpdate(
-            tareaId,
-            req.body,
-            { new: true } // Retorna el documento actualizado
-        )
-        .populate('responsable', 'nombre correo')
-        .populate('creadoPor', 'nombre correo');
-
-        // Crear notificación si cambió el estado
-        if (estadoAnterior !== tareaActualizada.estado) {
-            // Notificar al creador si el responsable cambió el estado
-            const usuarioANotificar = tareaActualizada.creadoPor._id.toString() === uid 
-                ? tareaActualizada.responsable._id 
-                : tareaActualizada.creadoPor._id;
-
-            const notificacion = new notificacionModel({
-                mensaje: `La tarea "${tareaActualizada.titulo}" cambió a estado: ${tareaActualizada.estado}`,
-                usuario_id: usuarioANotificar,
-                tarea_id: tareaActualizada._id,
-                tipo: 'tarea_actualizada',
-                prioridad: 'media'
-            });
-
-            await notificacion.save();
-        }
-
-        // Notificar si cambió el responsable
-        if (responsableAnterior !== tareaActualizada.responsable._id.toString()) {
-            const notificacion = new notificacionModel({
-                mensaje: `Se te ha asignado la tarea: "${tareaActualizada.titulo}"`,
-                usuario_id: tareaActualizada.responsable._id,
-                tarea_id: tareaActualizada._id,
-                tipo: 'tarea_asignada',
-                prioridad: 'alta'
-            });
-
-            await notificacion.save();
-        }
-
-        res.json({
-            ok: true,
-            tarea: tareaActualizada,
-            msg: 'Tarea actualizada exitosamente'
-        });
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok: false,
-            msg: 'Error al actualizar la tarea'
-        });
-    }
-};
-
-/**
- * CAMBIAR ESTADO DE TAREA
- * 
- * Endpoint específico para cambiar solo el estado de una tarea.
- * Más rápido que actualizar toda la tarea.
- */
-const cambiarEstadoTarea = async (req, res = response) => {
-    const tareaId = req.params.id;
-    const { estado } = req.body;
-    const uid = req.uid;
-
-    try {
-        const tarea = await tareaModel.findById(tareaId);
-
-        if (!tarea) {
-            return res.status(404).json({
-                ok: false,
-                msg: 'Tarea no encontrada'
-            });
-        }
-
-        // Verificar permisos
-        if (tarea.creadoPor.toString() !== uid && tarea.responsable.toString() !== uid) {
-            return res.status(401).json({
-                ok: false,
-                msg: 'No tiene permisos para cambiar el estado de esta tarea'
-            });
-        }
-
-        // Actualizar solo el estado
-        tarea.estado = estado;
-        await tarea.save();
-
-        await tarea.populate('responsable', 'nombre correo');
-        await tarea.populate('creadoPor', 'nombre correo');
-
-        // Crear notificación
-        const usuarioANotificar = tarea.creadoPor._id.toString() === uid 
-            ? tarea.responsable._id 
-            : tarea.creadoPor._id;
-
-        const notificacion = new notificacionModel({
-            mensaje: `La tarea "${tarea.titulo}" cambió a: ${estado}`,
-            usuario_id: usuarioANotificar,
-            tarea_id: tarea._id,
-            tipo: estado === 'Completada' ? 'tarea_completada' : 'tarea_actualizada',
-            prioridad: 'media'
-        });
-
-        await notificacion.save();
-
-        res.json({
-            ok: true,
-            tarea,
-            msg: 'Estado actualizado exitosamente'
-        });
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok: false,
-            msg: 'Error al cambiar el estado'
-        });
-    }
-};
-
-/**
- * ELIMINAR TAREA
- * 
- * Elimina una tarea de la base de datos.
- * Solo el creador puede eliminar la tarea.
- */
-const eliminarTarea = async (req, res = response) => {
-    const tareaId = req.params.id;
-    const uid = req.uid;
-
-    try {
-        const tarea = await tareaModel.findById(tareaId);
-
-        if (!tarea) {
-            return res.status(404).json({
-                ok: false,
-                msg: 'Tarea no encontrada'
-            });
-        }
-
-        // Solo el creador puede eliminar
-        if (tarea.creadoPor.toString() !== uid) {
-            return res.status(401).json({
-                ok: false,
-                msg: 'Solo el creador puede eliminar esta tarea'
-            });
-        }
-
-        // Eliminar la tarea
-        await tareaModel.findByIdAndDelete(tareaId);
-
-        // Eliminar notificaciones asociadas a esta tarea
-        await notificacionModel.deleteMany({ tarea_id: tareaId });
-
-        res.json({
-            ok: true,
-            msg: 'Tarea eliminada exitosamente'
-        });
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok: false,
-            msg: 'Error al eliminar la tarea'
-        });
-    }
+    res.status(200).json({
+      ok: true,
+      tarea,
+    });
+  } catch (error) {
+    console.error('Error al obtener tarea:', error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Error al obtener tarea',
+    });
+  }
 };
 
 /**
  * OBTENER TAREAS POR ESTADO
- * 
- * Filtra las tareas del usuario por un estado específico
  */
-const obtenerTareasPorEstado = async (req, res = response) => {
-    const { estado } = req.params;
-    const uid = req.uid;
+const obtenerTareasPorEstado = async (req, res) => {
+  const { estado } = req.params;
 
-    try {
-        const tareas = await tareaModel.find({
-            $and: [
-                {
-                    $or: [
-                        { responsable: uid },
-                        { creadoPor: uid }
-                    ]
-                },
-                { estado: estado }
-            ]
-        })
-        .populate('responsable', 'nombre correo')
-        .populate('creadoPor', 'nombre correo')
-        .sort({ fechaCreacion: -1 });
+  const estadosValidos = ['Pendiente', 'En_progreso', 'Completada'];
+  if (!estadosValidos.includes(estado)) {
+    return res.status(400).json({
+      ok: false,
+      msg: `Estado inválido. Debe ser: ${estadosValidos.join(', ')}`,
+    });
+  }
 
-        res.json({
-            ok: true,
-            tareas,
-            total: tareas.length
-        });
+  try {
+    const tareas = await Tarea.find({
+      responsable: req.usuario._id,
+      estado,
+    })
+      .populate('responsable', 'nombre correo rol')
+      .sort({ fechaCreacion: -1 });
 
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok: false,
-            msg: 'Error al obtener las tareas'
-        });
-    }
+    res.status(200).json({
+      ok: true,
+      tareas,
+    });
+  } catch (error) {
+    console.error('Error al obtener tareas por estado:', error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Error al obtener tareas',
+    });
+  }
 };
 
-// Exportar todas las funciones
+/**
+ * CREAR NUEVA TAREA
+ */
+const crearTarea = async (req, res) => {
+  const { titulo, descripcion, fechaLimite, responsable, prioridad } = req.body;
+
+  try {
+    console.log('📝 Creando tarea con datos:', { titulo, descripcion, fechaLimite, responsable, prioridad });
+
+    let responsableId;
+
+    if (!responsable || responsable.trim() === '') {
+      responsableId = req.usuario._id;
+      console.log('✅ Asignando al usuario autenticado:', responsableId);
+    } else {
+      const usuarioExiste = await Usuario.findById(responsable);
+
+      if (!usuarioExiste) {
+        return res.status(404).json({
+          ok: false,
+          msg: 'El usuario responsable no existe',
+        });
+      }
+
+      responsableId = responsable;
+      console.log('✅ Asignando al usuario especificado:', responsableId);
+    }
+
+    const nuevaTarea = new Tarea({
+      titulo,
+      descripcion,
+      fechaLimite: fechaLimite || undefined,
+      responsable: responsableId,
+      prioridad: prioridad || 'Media',
+    });
+
+    const tareaGuardada = await nuevaTarea.save();
+    console.log('✅ Tarea guardada en BD:', tareaGuardada._id);
+
+    await tareaGuardada.populate('responsable', 'nombre correo rol');
+
+    // Crear notificación para el responsable (si no es el mismo que la creó)
+    if (responsableId.toString() !== req.usuario._id.toString()) {
+      await crearNotificacion({
+        mensaje: `Se te ha asignado una nueva tarea: "${titulo}"`,
+        usuario_id: responsableId,
+        tarea_id: tareaGuardada._id,
+        tipo: 'tarea_asignada',
+        prioridad: prioridad === 'Urgente' || prioridad === 'Alta' ? 'alta' : 'media',
+      });
+    }
+
+    res.status(201).json({
+      ok: true,
+      msg: 'Tarea creada exitosamente',
+      tarea: tareaGuardada,
+    });
+  } catch (error) {
+    console.error('❌ Error al crear tarea:', error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Error al crear tarea',
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * ACTUALIZAR TAREA COMPLETA
+ */
+const actualizarTarea = async (req, res) => {
+  const { id } = req.params;
+  const { titulo, descripcion, estado, fechaLimite, responsable, prioridad } = req.body;
+
+  try {
+    const tarea = await Tarea.findById(id);
+
+    if (!tarea) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'Tarea no encontrada',
+      });
+    }
+
+    // Verificar permisos: admin puede actualizar cualquier tarea, usuario solo las suyas
+    const isAdmin = req.usuario.rol === 'admin';
+    const isAssigned = tarea.responsable.toString() === req.usuario._id.toString();
+
+    if (!isAdmin && !isAssigned) {
+      return res.status(403).json({
+        ok: false,
+        msg: 'No tienes permiso para actualizar esta tarea',
+      });
+    }
+
+    if (responsable && responsable !== tarea.responsable.toString()) {
+      const usuarioExiste = await Usuario.findById(responsable);
+      if (!usuarioExiste) {
+        return res.status(404).json({
+          ok: false,
+          msg: 'El usuario responsable no existe',
+        });
+      }
+    }
+
+    const datosActualizados = {
+      titulo: titulo || tarea.titulo,
+      descripcion: descripcion || tarea.descripcion,
+      estado: estado || tarea.estado,
+      fechaLimite: fechaLimite || tarea.fechaLimite,
+      responsable: responsable || tarea.responsable,
+      prioridad: prioridad || tarea.prioridad,
+    };
+
+    const tareaActualizada = await Tarea.findByIdAndUpdate(
+      id,
+      datosActualizados,
+      { new: true, runValidators: true }
+    ).populate('responsable', 'nombre correo rol');
+
+    // Crear notificación si se cambió el responsable
+    if (responsable && responsable !== tarea.responsable.toString()) {
+      await crearNotificacion({
+        mensaje: `Se te ha asignado la tarea: "${tareaActualizada.titulo}"`,
+        usuario_id: responsable,
+        tarea_id: tareaActualizada._id,
+        tipo: 'tarea_asignada',
+        prioridad: tareaActualizada.prioridad === 'Urgente' || tareaActualizada.prioridad === 'Alta' ? 'alta' : 'media',
+      });
+    }
+
+    // Notificar al responsable sobre la actualización (si no fue quien la actualizó)
+    if (tareaActualizada.responsable._id.toString() !== req.usuario._id.toString()) {
+      await crearNotificacion({
+        mensaje: `La tarea "${tareaActualizada.titulo}" ha sido actualizada`,
+        usuario_id: tareaActualizada.responsable._id,
+        tarea_id: tareaActualizada._id,
+        tipo: 'tarea_actualizada',
+        prioridad: 'media',
+      });
+    }
+
+    res.status(200).json({
+      ok: true,
+      msg: 'Tarea actualizada exitosamente',
+      tarea: tareaActualizada,
+    });
+  } catch (error) {
+    console.error('Error al actualizar tarea:', error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Error al actualizar tarea',
+    });
+  }
+};
+
+/**
+ * CAMBIAR ESTADO DE TAREA
+ */
+const cambiarEstadoTarea = async (req, res) => {
+  const { id } = req.params;
+  const { estado } = req.body;
+
+  const estadosValidos = ['Pendiente', 'En_progreso', 'Completada'];
+  if (!estadosValidos.includes(estado)) {
+    return res.status(400).json({
+      ok: false,
+      msg: `Estado inválido. Debe ser: ${estadosValidos.join(', ')}`,
+    });
+  }
+
+  try {
+    const tarea = await Tarea.findById(id);
+
+    if (!tarea) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'Tarea no encontrada',
+      });
+    }
+
+    // Verificar permisos: admin puede cambiar cualquier tarea, usuario solo las suyas
+    const isAdmin = req.usuario.rol === 'admin';
+    const isAssigned = tarea.responsable.toString() === req.usuario._id.toString();
+
+    if (!isAdmin && !isAssigned) {
+      return res.status(403).json({
+        ok: false,
+        msg: 'No tienes permiso para modificar esta tarea',
+      });
+    }
+
+    const estadoAnterior = tarea.estado;
+    tarea.estado = estado;
+    const tareaActualizada = await tarea.save();
+    await tareaActualizada.populate('responsable', 'nombre correo rol');
+
+    // Crear notificación si se completó la tarea y no fue el responsable quien la completó
+    if (estado === 'Completada' && estadoAnterior !== 'Completada') {
+      // Notificar al responsable (si no fue él quien la completó)
+      if (tareaActualizada.responsable._id.toString() !== req.usuario._id.toString()) {
+        await crearNotificacion({
+          mensaje: `La tarea "${tareaActualizada.titulo}" ha sido marcada como completada`,
+          usuario_id: tareaActualizada.responsable._id,
+          tarea_id: tareaActualizada._id,
+          tipo: 'tarea_completada',
+          prioridad: 'media',
+        });
+      }
+    } else if (estadoAnterior !== estado) {
+      // Notificar cambio de estado (si no fue el responsable)
+      if (tareaActualizada.responsable._id.toString() !== req.usuario._id.toString()) {
+        await crearNotificacion({
+          mensaje: `El estado de la tarea "${tareaActualizada.titulo}" cambió a ${estado.replace('_', ' ')}`,
+          usuario_id: tareaActualizada.responsable._id,
+          tarea_id: tareaActualizada._id,
+          tipo: 'tarea_actualizada',
+          prioridad: 'media',
+        });
+      }
+    }
+
+    res.status(200).json({
+      ok: true,
+      msg: 'Estado actualizado exitosamente',
+      tarea: tareaActualizada,
+    });
+  } catch (error) {
+    console.error('Error al cambiar estado:', error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Error al cambiar estado',
+    });
+  }
+};
+
+/**
+ * ELIMINAR TAREA
+ */
+const eliminarTarea = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const tarea = await Tarea.findById(id);
+
+    if (!tarea) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'Tarea no encontrada',
+      });
+    }
+
+    // Verificar permisos: admin puede eliminar cualquier tarea, usuario solo las suyas
+    const isAdmin = req.usuario.rol === 'admin';
+    const isAssigned = tarea.responsable.toString() === req.usuario._id.toString();
+
+    if (!isAdmin && !isAssigned) {
+      return res.status(403).json({
+        ok: false,
+        msg: 'No tienes permiso para eliminar esta tarea',
+      });
+    }
+
+    await Tarea.findByIdAndDelete(id);
+
+    res.status(200).json({
+      ok: true,
+      msg: 'Tarea eliminada exitosamente',
+    });
+  } catch (error) {
+    console.error('Error al eliminar tarea:', error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Error al eliminar tarea',
+    });
+  }
+};
+
 module.exports = {
-    obtenerTareas,
-    obtenerTareaPorId,
-    crearTarea,
-    actualizarTarea,
-    cambiarEstadoTarea,
-    eliminarTarea,
-    obtenerTareasPorEstado
+  obtenerTareas,
+  obtenerTareaPorId,
+  obtenerTareasPorEstado,
+  crearTarea,
+  actualizarTarea,
+  cambiarEstadoTarea,
+  eliminarTarea,
 };

@@ -1,10 +1,5 @@
 /**
  * MODELO DE NOTIFICACIONES
- * 
- * este modelo representa las notificaciones del sistema.
- * cada notificación esta asociada a un usuario y opcionalmente a una tarea.
- * 
- * modelo basandose en la estructura de MongoDB
  */
 
 const { Schema, model } = require('mongoose');

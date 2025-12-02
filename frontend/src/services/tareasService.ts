@@ -1,204 +1,185 @@
 /**
- * SERVICIO DE TAREAS
+ * SERVICIO DE TAREAS - CORREGIDO
  * 
  * Maneja todas las peticiones HTTP relacionadas con tareas.
  * CRUD completo + cambio de estado.
  * 
+ * CORREGIDO: Agregados logs para debug y manejo mejorado de errores
  */
 
 import api from './api';
-import type { Tarea, TareaFormData, TareasResponse, EstadoTarea } from '../types';
+import type { Tarea, TareaFormData, TareasResponse } from '../types';
+
+// Local single-tarea response type (backend shape: { ok, tarea?, msg? })
+type TareaResponse = {
+  ok: boolean;
+  tarea?: Tarea;
+  msg?: string;
+};
 
 /**
  * OBTENER TODAS LAS TAREAS
- * 
- * Obtiene todas las tareas del usuario autenticado.
+ * Obtiene las tareas del usuario autenticado
  */
-export const obtenerTareas = async (): Promise<Tarea[]> => {
+export const obtenerTareas = async (): Promise<TareasResponse> => {
   try {
-    const { data } = await api.get<TareasResponse>('/tareas');
-    return data.tareas || [];
-  } catch (error) {
-    console.error('Error al obtener tareas:', error);
-    throw error;
+    console.log('📋 Obteniendo tareas...');
+    const { data } = await api.get('/tareas');
+
+    console.log('✅ Tareas obtenidas:', data.tareas?.length || 0);
+
+    return {
+      ok: true,
+      tareas: data.tareas as Tarea[],
+    };
+  } catch (error: any) {
+    console.error('❌ Error al obtener tareas:', error);
+    return {
+      ok: false,
+      msg: error.data?.msg || error.message || 'Error al obtener tareas',
+      tareas: [],
+    };
   }
 };
 
 /**
  * OBTENER TAREA POR ID
- * 
- * Obtiene una tarea específica por su ID.
  */
-export const obtenerTareaPorId = async (id: string): Promise<Tarea> => {
+export const obtenerTareaPorId = async (id: string): Promise<TareaResponse> => {
   try {
-    const { data } = await api.get<TareasResponse>(`/tareas/${id}`);
-    if (!data.tarea) {
-      throw new Error('Tarea no encontrada');
-    }
-    return data.tarea;
-  } catch (error) {
-    console.error('Error al obtener tarea:', error);
-    throw error;
-  }
-};
+    console.log('🔍 Obteniendo tarea:', id);
+    const { data } = await api.get(`/tareas/${id}`);
 
-/**
- * OBTENER TAREAS POR ESTADO
- * 
- * Filtra tareas por estado específico.
- */
-export const obtenerTareasPorEstado = async (estado: EstadoTarea): Promise<Tarea[]> => {
-  try {
-    const { data } = await api.get<TareasResponse>(`/tareas/estado/${estado}`);
-    return data.tareas || [];
-  } catch (error) {
-    console.error('Error al filtrar tareas por estado:', error);
-    throw error;
+    console.log('✅ Tarea obtenida:', data.tarea);
+
+    return {
+      ok: true,
+      tarea: data.tarea as Tarea,
+    };
+  } catch (error: any) {
+    console.error('❌ Error al obtener tarea:', error);
+    return {
+      ok: false,
+      msg: error.data?.msg || error.message || 'Error al obtener tarea',
+    };
   }
 };
 
 /**
  * CREAR TAREA
- * 
- * Crea una nueva tarea.
  */
-export const crearTarea = async (tareaData: TareaFormData): Promise<Tarea> => {
+export const crearTarea = async (tareaData: TareaFormData): Promise<TareaResponse> => {
   try {
-    const { data } = await api.post<TareasResponse>('/tareas', tareaData);
-    if (!data.tarea) {
-      throw new Error('Error al crear la tarea');
-    }
-    return data.tarea;
-  } catch (error) {
-    console.error('Error al crear tarea:', error);
-    throw error;
+    console.log('📝 Creando tarea con datos:', tareaData);
+
+    // Preparar datos para enviar
+    const dataToSend = {
+      titulo: tareaData.titulo.trim(),
+      descripcion: tareaData.descripcion.trim(),
+      fechaLimite: tareaData.fechaLimite || undefined,
+      responsable: tareaData.responsable?.trim() || undefined,
+      prioridad: tareaData.prioridad || 'Media',
+    };
+
+    console.log('📤 Datos a enviar al backend:', dataToSend);
+
+    const { data } = await api.post('/tareas', dataToSend);
+
+    console.log('✅ Respuesta del backend:', data);
+
+    return {
+      ok: true,
+      tarea: data.tarea as Tarea,
+      msg: data.msg,
+    };
+  } catch (error: any) {
+    console.error('❌ Error completo:', error);
+    console.error('❌ Error data:', error.data);
+    console.error('❌ Error message:', error.message);
+
+    return {
+      ok: false,
+      msg: error.data?.msg || error.message || 'Error al crear tarea',
+    };
   }
 };
 
 /**
  * ACTUALIZAR TAREA
- * 
- * Actualiza una tarea existente completa.
  */
 export const actualizarTarea = async (
   id: string,
-  tareaData: Partial<TareaFormData>
-): Promise<Tarea> => {
+  tareaData: TareaFormData
+): Promise<TareaResponse> => {
   try {
-    const { data } = await api.put<TareasResponse>(`/tareas/${id}`, tareaData);
-    if (!data.tarea) {
-      throw new Error('Error al actualizar la tarea');
-    }
-    return data.tarea;
-  } catch (error) {
-    console.error('Error al actualizar tarea:', error);
-    throw error;
+    console.log('✏️ Actualizando tarea:', id, tareaData);
+
+    const { data } = await api.put(`/tareas/${id}`, tareaData);
+
+    console.log('✅ Tarea actualizada:', data.tarea);
+
+    return {
+      ok: true,
+      tarea: data.tarea as Tarea,
+      msg: data.msg,
+    };
+  } catch (error: any) {
+    console.error('❌ Error al actualizar tarea:', error);
+    return {
+      ok: false,
+      msg: error.data?.msg || error.message || 'Error al actualizar tarea',
+    };
   }
 };
 
 /**
  * CAMBIAR ESTADO DE TAREA
- * 
- * Cambia solo el estado de una tarea (más rápido que actualizar completa).
  */
 export const cambiarEstadoTarea = async (
   id: string,
-  estado: EstadoTarea
-): Promise<Tarea> => {
+  estado: string
+): Promise<TareaResponse> => {
   try {
-    const { data } = await api.patch<TareasResponse>(`/tareas/${id}/estado`, { estado });
-    if (!data.tarea) {
-      throw new Error('Error al cambiar el estado');
-    }
-    return data.tarea;
-  } catch (error) {
-    console.error('Error al cambiar estado:', error);
-    throw error;
+    console.log('🔄 Cambiando estado de tarea:', id, 'a', estado);
+
+    const { data } = await api.patch(`/tareas/${id}/estado`, { estado });
+
+    console.log('✅ Estado cambiado:', data.tarea);
+
+    return {
+      ok: true,
+      tarea: data.tarea as Tarea,
+      msg: data.msg,
+    };
+  } catch (error: any) {
+    console.error('❌ Error al cambiar estado:', error);
+    return {
+      ok: false,
+      msg: error.data?.msg || error.message || 'Error al cambiar estado',
+    };
   }
 };
 
 /**
  * ELIMINAR TAREA
- * 
- * Elimina una tarea del sistema.
  */
-export const eliminarTarea = async (id: string): Promise<void> => {
+export const eliminarTarea = async (id: string): Promise<{ ok: boolean; msg?: string }> => {
   try {
-    await api.delete(`/tareas/${id}`);
-  } catch (error) {
-    console.error('Error al eliminar tarea:', error);
-    throw error;
+    console.log('🗑️ Eliminando tarea:', id);
+
+    const { data } = await api.delete(`/tareas/${id}`);
+
+    console.log('✅ Tarea eliminada');
+
+    return {
+      ok: true,
+      msg: data.msg,
+    };
+  } catch (error: any) {
+    console.error('❌ Error al eliminar tarea:', error);
+    return {
+      ok: false,
+      msg: error.data?.msg || error.message || 'Error al eliminar tarea',
+    };
   }
-};
-
-/**
- * HELPERS LOCALES PARA FILTRADO Y BÚSQUEDA
- * 
- * Estas funciones se ejecutan en el cliente para no sobrecargar el servidor.
- */
-
-/**
- * Filtrar tareas localmente por múltiples criterios
- */
-export const filtrarTareasLocal = (
-  tareas: Tarea[],
-  filtros: {
-    estado?: EstadoTarea;
-    prioridad?: string;
-    busqueda?: string;
-  }
-): Tarea[] => {
-  let resultado = [...tareas];
-
-  // Filtrar por estado
-  if (filtros.estado) {
-    resultado = resultado.filter(t => t.estado === filtros.estado);
-  }
-
-  // Filtrar por prioridad
-  if (filtros.prioridad) {
-    resultado = resultado.filter(t => t.prioridad === filtros.prioridad);
-  }
-
-  // Filtrar por búsqueda (título o descripción)
-  if (filtros.busqueda) {
-    const busquedaLower = filtros.busqueda.toLowerCase();
-    resultado = resultado.filter(
-      t =>
-        t.titulo.toLowerCase().includes(busquedaLower) ||
-        t.descripcion.toLowerCase().includes(busquedaLower)
-    );
-  }
-
-  return resultado;
-};
-
-/**
- * Ordenar tareas por fecha
- */
-export const ordenarTareasPorFecha = (
-  tareas: Tarea[],
-  orden: 'asc' | 'desc' = 'desc'
-): Tarea[] => {
-  return [...tareas].sort((a, b) => {
-    const fechaA = new Date(a.fechaLimite).getTime();
-    const fechaB = new Date(b.fechaLimite).getTime();
-    return orden === 'asc' ? fechaA - fechaB : fechaB - fechaA;
-  });
-};
-
-/**
- * Obtener tareas próximas a vencer (próximos 3 días)
- */
-export const obtenerTareasProximasAVencer = (tareas: Tarea[]): Tarea[] => {
-  const hoy = new Date();
-  const tresDias = new Date(hoy.getTime() + 3 * 24 * 60 * 60 * 1000);
-
-  return tareas.filter(tarea => {
-    if (tarea.estado === 'Completada' || tarea.estado === 'Cancelada') {
-      return false;
-    }
-    const fechaLimite = new Date(tarea.fechaLimite);
-    return fechaLimite >= hoy && fechaLimite <= tresDias;
-  });
 };

@@ -6,7 +6,8 @@ const router = Router();
 // se encarga de validar los campos
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validarCampos');
-const { validarJsonWT } = require('../middlewares/validarJWT');
+const { validarJWT } = require('../middlewares/validarJWT');
+
 
 
 // desestrurar funciones de acciones
@@ -42,7 +43,9 @@ router.post(
 );
 
 // enpoint para renovar Token
-router.get('/renew', validarJsonWT, renovarToken);
+router.get('/renew', validarJWT, renovarToken);
+
+
 
 
 // exportar 

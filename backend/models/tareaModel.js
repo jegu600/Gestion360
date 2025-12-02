@@ -1,9 +1,5 @@
 /**
  * MODELO DE TAREAS (EVENTOS)
- * 
- * Este modelo representa las tareas en el sistema de gestión.
- * Cada tarea tiene titulo, descripción, estado, fechas y un responsable asignado.
- * 
  */
 
 const { Schema, model } = require('mongoose');
@@ -47,14 +43,14 @@ const tareaSchema = Schema({
     // Usuario responsable de la tarea (referencia a la colección usuarios)
     responsable: {
         type: Schema.Types.ObjectId,
-        ref: 'usuarioModel', // IMPORTANTE: Debe coincidir con el nombre del modelo de usuario
+        ref: 'Usuario', // IMPORTANTE: Debe coincidir con el nombre del modelo de usuario
         required: true,
     },
 
     // Usuario que creó la tarea (opcional, para auditoria)
     creadoPor: {
         type: Schema.Types.ObjectId,
-        ref: 'usuarioModel',
+        ref: 'Usuario',
         required: false,
     },
 
@@ -71,7 +67,7 @@ const tareaSchema = Schema({
 });
 
 // Metodo para popular (llenar) información del responsable
-tareaSchema.methods.toJSON = function() {
+tareaSchema.methods.toJSON = function () {
     const { __v, _id, ...tarea } = this.toObject();
     tarea.id = _id;
     return tarea;
