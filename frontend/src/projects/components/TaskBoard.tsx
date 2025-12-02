@@ -8,7 +8,6 @@ const COLUMNS: { id: EstadoTarea; title: string }[] = [
     { id: 'Pendiente', title: 'Pendiente' },
     { id: 'En_progreso', title: 'En Progreso' },
     { id: 'Completada', title: 'Completada' },
-    { id: 'Cancelada', title: 'Cancelada' },
 ];
 
 const TaskBoard: React.FC = () => {
